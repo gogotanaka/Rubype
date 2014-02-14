@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+require 'sorry_yahoo_finance'
