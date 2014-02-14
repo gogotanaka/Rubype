@@ -1,19 +1,17 @@
 SorryYahooFinance README
 =============
 
-Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/
-）　から株の情報をひっぱてきます。ごめんなさい。Yahoo!
+I'll be pulling the stock of information from Yahoo! Finance. I am sorry. Yahoo!
 
-
-更新履歴
+Update Info
 --------
 * 0.1.0 (2014-02-15)
-  * 一応形にした
+  * I was in shape once.
 
-例
+Example
 --------
 
-証券コードを引数にその株式の情報をひっぱってくる
+I will pull the information of the stock by securities code.
 
 ```ruby:ex1.rb
 SorryYahooFinance.get_from_code(3333)
@@ -37,7 +35,7 @@ SorryYahooFinance.get_from_code(3333)
   :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"}
 ```
 
-複数も可
+Multiple possible.
 
 ```ruby:ex2.rb
 SorryYahooFinance.get_from_codes([3333,4355])
@@ -73,8 +71,7 @@ SorryYahooFinance.get_from_codes([3333,4355])
   ........（略)
 ```
 
-全株式（http://www.tse.or.jp/market/data/listed_companies/
-)このあたり参照
+All of the shares.
 
 ```ruby:ex3.rb
 SorryYahooFinance.get_all
