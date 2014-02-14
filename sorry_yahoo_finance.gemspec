@@ -7,9 +7,9 @@ Gem::Specification.new do |spec|
   spec.name          = "sorry_yahoo_finance"
   spec.version       = SorryYahooFinance::VERSION
   spec.authors       = ["gogotanaka"]
-  spec.email         = ["yakuruto771@live.jp"]
-  spec.summary       = %q{It will acquire a stock infomations form yahoofinance, although I am very sorry to Yahoo!.}
-  spec.description   = %q{sorry yahoo finance.}
+  spec.email         = ["qlli.illb@gmail.com"]
+  spec.summary       = %q{acquire a stock infomations form yahoofinance, although I am very sorry to Yahoo!.}
+  spec.description   = %q{acquire a stock infomations form yahoofinance, although I am very sorry to Yahoo!.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rake", ">= 10.0.0"
   spec.add_development_dependency "rspec"
   spec.add_runtime_dependency "nokogiri"
   spec.add_runtime_dependency "openurl"
