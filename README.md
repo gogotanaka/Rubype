@@ -1,8 +1,8 @@
 SorryYahooFinance README
 =============
 
-Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）から株の情報をひっぱてきます。
-ごめんなさい。Yahoo!
+Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
+から株の情報をひっぱてきます。ごめんなさい。Yahoo!
 
 
 更新履歴
