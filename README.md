@@ -1,8 +1,8 @@
 SorryYahooFinance README
 =============
 
-Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
-から株の情報をひっぱてきます。ごめんなさい。Yahoo!
+Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/
+）　から株の情報をひっぱてきます。ごめんなさい。Yahoo!
 
 
 更新履歴
@@ -12,8 +12,35 @@ Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
 
 例
 --------
-```ruby:heihe.rb
- SorryYahooFinance.get_from_codes([3333])
+
+証券コードを引数にその株式の情報をひっぱってくる
+
+```ruby:ex1.rb
+SorryYahooFinance.get_from_code(3333)
+=> {:code=>3333,
+  :name=>"(株)あさひ",
+  :market=>"東証1部",
+  :industry=>"小売業",
+  :price=>"1,308",
+  :previousprice=>"1,321",
+  :opening=>"1,326",
+  :high=>"1,331",
+  :low=>"1,302",
+  :turnover=>"95,700",
+  :trading_volume=>"125,686",
+  :price_limit=>"1,021～1,621",
+  :margin_buying=>"174,700",
+  :margin_selling=>"135,400",
+  :d_margin_buying=>"-7,800",
+  :d_margin_selling=>"-39,300",
+  :margin_rate=>"1.29",
+  :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"}
+```
+
+複数も可
+
+```ruby:ex2.rb
+SorryYahooFinance.get_from_codes([3333,4355])
 => [{:code=>3333,
   :name=>"(株)あさひ",
   :market=>"東証1部",
@@ -31,8 +58,29 @@ Yahoo!Japanファイナンス（http://finance.yahoo.co.jp/）
   :d_margin_buying=>"-7,800",
   :d_margin_selling=>"-39,300",
   :margin_rate=>"1.29",
-  :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"}]
+  :chart_image=>"http://gchart.yahoo.co.jp/f?s=3333.T"},
+ {:code=>4355,
+  :name=>"ロングライフホールディング(株)",
+  :market=>"東証JQS",
+  :industry=>"サービス業",
+  :price=>"307",
+  :previousprice=>"313",
+  :opening=>"312",
+  :high=>"312",
+  :low=>"303",
+  :turnover=>"21,600",
+  :trading_volume=>"6,674",
+  ........（略)
 ```
+
+全株式（http://www.tse.or.jp/market/data/listed_companies/
+)このあたり参照
+
+```ruby:ex3.rb
+SorryYahooFinance.get_all
+=> .....(略)
+```
+
 
 LICENSE
 -------
