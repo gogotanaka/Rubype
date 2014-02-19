@@ -40,7 +40,8 @@ module SorryYahooFinance
         }
       end
 
-      def get_info_with_date(url)
+      def get_infos_with_date(url)
+        puts url
         html = Converter.do(url)
         tds = html.xpath("(//div[@id='main']//table)[2]//td")
         opening, high, low, finish, turnover = tds[1..5].map(&:text)
@@ -74,7 +75,9 @@ module SorryYahooFinance
         begin
           @values = if date
             year, month, day = date.strftime("%Y,%m,%d").split(",")
-            self.class.get_info_with_date("http://info.finance.yahoo.co.jp/history/?code=#{code}.T&sy=#{year}&sm=#{month}&sd=#{day}&ey=#{year}&em=#{month}&ed=#{day}&tm=d")
+            month.delete!("0")
+            url = "http://info.finance.yahoo.co.jp/history/?code=#{code}.T&sy=#{year}&sm=#{month}&sd=#{day}&ey=#{year}&em=#{month}&ed=#{day}&tm=d"
+            self.class.get_infos_with_date(url)
           else
             self.class.get_infos("http://stocks.finance.yahoo.co.jp/stocks/detail/?code=#{code}")
           end
