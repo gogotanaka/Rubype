@@ -41,7 +41,6 @@ module SorryYahooFinance
       end
 
       def get_infos_with_date(url)
-        puts url
         html = Converter.do(url)
         tds = html.xpath("(//div[@id='main']//table)[2]//td")
         opening, high, low, finish, turnover = tds[1..5].map(&:text)
@@ -70,6 +69,7 @@ module SorryYahooFinance
       end
     end
 
+    # 急場の時はアラート出したい
     def initialize(code, date=nil)
       if code.class == Fixnum && code.to_s.size == 4
         begin
@@ -114,7 +114,8 @@ module SorryYahooFinance
         :margin_buying,
         :margin_selling,
         :d_margin_buying,
-        :d_margin_selling
+        :d_margin_selling,
+        :finish
       ]
       @values = @values.map_to_hash do |k,v|
         if int_keys.include?(k) && v.class == String
