@@ -65,7 +65,7 @@ module SorryYahooFinance
       end
 
       def get_all
-        get_from_codes(AllStockCodes::CODES)
+        get_by_codes(AllStockCodes::CODES)
       end
     end
 
