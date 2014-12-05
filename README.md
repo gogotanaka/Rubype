@@ -6,12 +6,12 @@ require 'haskell'
 
 # Ruby 2.1.0+
 class MyClass
-    type Numeric >= Numeric >= Numeric, def sum(x, y)
+  type Numeric >= Numeric >= Numeric, def sum(x, y)
     x + y
   end
 
   type Numeric >= Numeric >= Numeric, def wrong_sum(x, y)
-  'string'
+    'string'
   end
 end
 
@@ -75,4 +75,4 @@ People.new.marry('non people')
 
 
 ## Credits
-[@chancancode](https://github.com/chancancode) first brought this to my attention.
+[@chancancode](https://github.com/chancancode) first brought this to my attention. I've stolen some idea from him.
