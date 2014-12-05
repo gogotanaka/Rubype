@@ -12,6 +12,14 @@ class TypeList
     self
   end
 
+  def args
+    @list[0..-2]
+  end
+
+  def rtn
+    @list.last
+  end
+
   def to_s
     @list.map(&:to_s).join(' -> ')
   end
