@@ -47,10 +47,10 @@ class TestHaskell < MiniTest::Unit::TestCase
     assert_wrong_arg Numeric >= Numeric, [@hash  ], @numeric
     assert_wrong_arg Numeric >= Numeric, [@symbol], @numeric
 
-    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @array  ], @numeric
-    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @string ], @numeric
-    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @hash   ], @numeric
-    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @symbol ], @numeric
+    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @array ], @numeric
+    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @string], @numeric
+    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @hash  ], @numeric
+    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @symbol], @numeric
   end
 
   private

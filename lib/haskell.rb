@@ -1,6 +1,4 @@
-require 'haskell/entity'
 require 'haskell/type_list'
-require 'pry'
 
 module Haskell
   class << self
@@ -37,3 +35,5 @@ class Module
       self
     end
 end
+
+class Any; end

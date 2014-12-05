@@ -1,5 +1,5 @@
 # '>=' is left-associative ...
-# LISP or Hash is better?
+# List like LISP or Hash may be better.
 class TypeList
   attr_accessor :list
 
