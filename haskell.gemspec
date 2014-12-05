@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["gogotanaka"]
   spec.email         = ["mail@tanakakazuki.com"]
   spec.extensions    = ["ext/haskell/extconf.rb"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Ruby with type.}
+  spec.description   = %q{Ruby with type.}
+  spec.homepage      = "http://azabuhs.org/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
