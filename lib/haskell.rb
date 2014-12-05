@@ -1,6 +1,9 @@
-require "haskell/version"
-require "haskell/haskell"
+require 'haskell/entity'
+require 'haskell/type_list'
+require 'pry'
 
-module Haskell
-  # Your code goes here...
+module Kernel
+  def Haskell(&block)
+    Haskell::Entity.eval(&block)
+  end
 end

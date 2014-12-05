@@ -1,11 +1,17 @@
 require 'minitest_helper'
 
 class TestHaskell < MiniTest::Unit::TestCase
-  def test_that_it_has_a_version_number
-    refute_nil ::Haskell::VERSION
+  def setup
   end
 
-  def test_it_does_something_useful
-    assert false
+  def test_type_list
+    assert_equal_to_s "Numeric -> Numeric", Numeric >= Numeric
+    assert_equal_to_s "Numeric -> Numeric -> Array", Numeric >= Numeric >= Array
+    assert_equal_to_s "Hash -> Symbol -> Numeric -> Array -> String", Hash >= Symbol >= Numeric >= Array >= String
   end
+
+  private
+    def assert_equal_to_s(str, val)
+      assert_equal str, val.to_s
+    end
 end
