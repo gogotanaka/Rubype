@@ -1,0 +1,11 @@
+  def test_any
+    assert_wrong_arg @symbo >= @symbo, [@array ], @numeric
+    assert_wrong_arg @symbo >= @symbo, [@string], @numeric
+    assert_wrong_arg @symbo >= @symbo, [@hash  ], @numeric
+    assert_wrong_arg @symbo >= @symbo, [@symbol], @numeric
+
+    assert_wrong_arg @symbo >= @symbo >= @symbo, [@numeric, @array ], @numeric
+    assert_wrong_arg @symbo >= @symbo >= @symbo, [@numeric, @string], @numeric
+    assert_wrong_arg @symbo >= @symbo >= @symbo, [@numeric, @hash  ], @numeric
+    assert_wrong_arg @symbo >= @symbo >= @symbo, [@numeric, @symbol], @numeric
+  en

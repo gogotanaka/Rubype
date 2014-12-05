@@ -43,11 +43,27 @@ gem 'haskell'
 
 And then execute:
 
-$ bundle
+    $ bundle
 
 Or install it yourself as:
 
-$ gem install haskell
+    $ gem install haskell
+
+## More example
+```ruby
+class People
+  type People >= Any, def marry(people)
+    # Your Ruby code as usual
+  end
+end
+
+People.new.marry(People.new)
+#=> no error
+
+People.new.marry('non people')
+#=> ArgumentError: Wrong type of argument, type of "non people" should be People
+
+```
 
 ## Contributing
 

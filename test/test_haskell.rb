@@ -53,6 +53,18 @@ class TestHaskell < MiniTest::Unit::TestCase
     assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @symbol], @numeric
   end
 
+  def test_any
+    assert_correct_type Any >= Any, [@array ], @numeric
+    assert_correct_type Any >= Any, [@string], @numeric
+    assert_correct_type Any >= Any, [@hash  ], @numeric
+    assert_correct_type Any >= Any, [@symbol], @numeric
+
+    assert_correct_type Any >= Any >= Any, [@numeric, @array ], @numeric
+    assert_correct_type Any >= Any >= Any, [@numeric, @string], @numeric
+    assert_correct_type Any >= Any >= Any, [@numeric, @hash  ], @numeric
+    assert_correct_type Any >= Any >= Any, [@numeric, @symbol], @numeric
+  end
+
   private
     def assert_equal_to_s(str, val)
       assert_equal str, val.to_s
