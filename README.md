@@ -5,7 +5,7 @@ Matz has mentioned Ruby3.0 with static type at some confluences. But almost all 
 But it's worth thinking more. This gem is kind of trial without so much side-effect.
 
 ```rb
-require 'haskell'
+require 'rubype'
 
 # ex1
 class MyClass
@@ -90,13 +90,13 @@ MyClass.new.foo('str')
 
 ## Installation
 
-gem install haskell or add gem 'haskell' to your Gemfile.
+gem install rubype or add gem 'rubype' to your Gemfile.
 
 This gem requires Ruby 2.0.0+.
 
 ### Contributing
 
-Fork it ( https://github.com/[my-github-username]/haskell/fork )
+Fork it ( https://github.com/[my-github-username]/rubype/fork )
 
 Create your feature branch (`git checkout -b my-new-feature`)
 

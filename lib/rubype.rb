@@ -1,4 +1,4 @@
-require 'haskell/type_pair'
+require 'rubype/type_pair'
 
 # Builtin Contracts
 class  Any;     end
@@ -8,25 +8,25 @@ FalseClass.send(:include, Boolean)
 
 class Module
   private
-  def __haskell__
-    prepend (@__haskell__ = Module.new) unless @__haskell__
-    @__haskell__
+  def __rubype__
+    prepend (@__rubype__ = Module.new) unless @__rubype__
+    @__rubype__
   end
 
   def type(*arguments)
     *arg_types, type_pair, meth = arguments
 
-    __haskell__.send(:define_method, meth) do |*args, &block|
-      ::Haskell.assert_arg_type(meth, args, arg_types << type_pair.last_arg_type)
+    __rubype__.send(:define_method, meth) do |*args, &block|
+      ::Rubype.assert_arg_type(meth, args, arg_types << type_pair.last_arg_type)
       rtn = super(*args, &block)
-      ::Haskell.assert_trn_type(meth, rtn, type_pair.rtn_type)
+      ::Rubype.assert_trn_type(meth, rtn, type_pair.rtn_type)
       rtn
     end
     self
   end
 end
 
-module Haskell
+module Rubype
   class << self
     def assert_arg_type(meth, args, klasses)
       args.each_with_index do |arg, i|

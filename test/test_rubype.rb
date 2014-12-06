@@ -4,7 +4,7 @@ class TypePair
     "#{last_arg_type} >= #{rtn_type}"
   end
 end
-class TestHaskell < MiniTest::Unit::TestCase
+class TestRubype < MiniTest::Unit::TestCase
   def setup
     @string  = 'str'
     @numeric = 1
