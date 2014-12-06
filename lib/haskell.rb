@@ -1,4 +1,4 @@
-require 'haskell/type_list'
+require 'haskell/type_pair'
 
 # Builtin Contracts
 class  Any;     end
@@ -13,11 +13,13 @@ class Module
     @__haskell__
   end
 
-  def type(type_list, meth)
+  def type(*arguments)
+    *arg_types, type_pair, meth = arguments
+
     __haskell__.send(:define_method, meth) do |*args, &block|
-      ::Haskell.assert_arg_type(meth, args, type_list.args)
+      ::Haskell.assert_arg_type(meth, args, arg_types << type_pair.last_arg_type)
       rtn = super(*args, &block)
-      ::Haskell.assert_trn_type(meth, rtn, type_list.rtn)
+      ::Haskell.assert_trn_type(meth, rtn, type_pair.rtn_type)
       rtn
     end
     self

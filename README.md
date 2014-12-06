@@ -9,11 +9,11 @@ require 'haskell'
 
 # ex1: (Ruby 2.1.0+)
 class MyClass
-  type Numeric >= Numeric >= Numeric, def sum(x, y)
+  type Numeric, Numeric >= Numeric, def sum(x, y)
     x + y
   end
 
-  type Numeric >= Numeric >= Numeric, def wrong_sum(x, y)
+  type Numeric, Numeric >= Numeric, def wrong_sum(x, y)
     'string'
   end
 end
@@ -47,7 +47,7 @@ class MyClass
   def sum(x, y)
     x + y
   end
-  type Numeric >= Numeric >= Numeric, :sum
+  type Numeric, Numeric >= Numeric, :sum
 end
 ```
 
@@ -57,7 +57,7 @@ end
 ```ruby
 # It's totally OK!!
 class MyClass
-  type Numeric >= Numeric >= Numeric, def sum(x, y)
+  type Numeric, Numeric >= Numeric, def sum(x, y)
     x + y
   end
 
