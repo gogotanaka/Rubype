@@ -21,12 +21,14 @@ class TestHaskell < MiniTest::Unit::TestCase
     assert_correct_type Numeric >= String,  [@numeric], @string
     assert_correct_type Numeric >= Hash,    [@numeric], @hash
     assert_correct_type Numeric >= Symbol,  [@numeric], @symbol
+    assert_correct_type Numeric >= Boolean, [@numeric], true
+    assert_correct_type Numeric >= Boolean, [@numeric], false
 
-    assert_correct_type Numeric >= Numeric >= Numeric, [@numeric, @numeric], @numeric
-    assert_correct_type Numeric >= Array   >= Array,   [@numeric, @array  ], @array
-    assert_correct_type Numeric >= String  >= String,  [@numeric, @string ], @string
-    assert_correct_type Numeric >= Hash    >= Hash,    [@numeric, @hash   ], @hash
-    assert_correct_type Numeric >= Symbol  >= Symbol,  [@numeric, @symbol ], @symbol
+    assert_correct_type Boolean >= Numeric >= Numeric, [true, @numeric], @numeric
+    assert_correct_type Boolean >= Array   >= Array,   [true, @array  ], @array
+    assert_correct_type Boolean >= String  >= String,  [true, @string ], @string
+    assert_correct_type Boolean >= Hash    >= Hash,    [true, @hash   ], @hash
+    assert_correct_type Boolean >= Symbol  >= Symbol,  [true, @symbol ], @symbol
   end
 
   def test_wrong_return_type
