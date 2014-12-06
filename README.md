@@ -7,15 +7,17 @@ But it's worth thinking more. This gem is kind of trial without so much side-eff
 ```rb
 require 'haskell'
 
-# ex1: (Ruby 2.1.0+)
+# ex1
 class MyClass
-  type Numeric, Numeric >= Numeric, def sum(x, y)
+  def sum(x, y)
     x + y
   end
+  type Numeric, Numeric >= Numeric, :sum
 
-  type Numeric, Numeric >= Numeric, def wrong_sum(x, y)
+  def wrong_sum(x, y)
     'string'
   end
+  type Numeric, Numeric >= Numeric, :sum
 end
 
 MyClass.new.sum(1, 2)
@@ -27,8 +29,18 @@ MyClass.new.sum(1, 'string')
 MyClass.new.wrong_sum(1, 2)
 #=> TypeError: Expected wrong_sum to return Numeric but got "str" instead
 
-
 # ex2: (Ruby 2.1.0+)
+class MyClass
+  type Numeric, Numeric >= Numeric, def sum(x, y)
+    x + y
+  end
+
+  type Numeric, Numeric >= Numeric, def wrong_sum(x, y)
+    'string'
+  end
+end
+
+# ex3: (Ruby 2.1.0+)
 class People
   type People >= Any, def marry(people)
     # Your Ruby code as usual
@@ -40,15 +52,6 @@ People.new.marry(People.new)
 
 People.new.marry('non people')
 #=> ArgumentError: Wrong type of argument, type of "non people" should be People
-
-
-# ex3: (Ruby 1.8.0+)
-class MyClass
-  def sum(x, y)
-    x + y
-  end
-  type Numeric, Numeric >= Numeric, :sum
-end
 ```
 
 ## Feature
@@ -57,9 +60,10 @@ end
 ```ruby
 # It's totally OK!!
 class MyClass
-  type Numeric, Numeric >= Numeric, def sum(x, y)
+  def sum(x, y)
     x + y
   end
+  type Numeric, Numeric >= Numeric, :sum
 
   def wrong_sum(x, y)
     'string'
@@ -72,9 +76,10 @@ end
 ```ruby
 
 class MyClass
-  type Any >= Numeric, def foo(any_obj)
+  def foo(any_obj)
     1
   end
+  type Any >= Numeric, :foo
 end
 
 # It's totally OK!!
@@ -85,20 +90,9 @@ MyClass.new.foo('str')
 
 ## Installation
 
-Add this line to your application's Gemfile:
+gem install haskell or add gem 'haskell' to your Gemfile.
 
-```ruby
-gem 'haskell'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install haskell
-
+This gem requires Ruby 2.0.0+.
 
 ### Contributing
 
