@@ -5,7 +5,7 @@ require 'haskell/assert_rtn_type'
 
 module Haskell; end
 
-# New Class(Type)
+# Builtin Contracts
 class  Any;     end
 module Boolean; end
 TrueClass.send(:include, Boolean)

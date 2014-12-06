@@ -36,11 +36,13 @@ class TestHaskell < MiniTest::Unit::TestCase
     assert_wrong_rtn Numeric >= Numeric, [@numeric], @string
     assert_wrong_rtn Numeric >= Numeric, [@numeric], @hash
     assert_wrong_rtn Numeric >= Numeric, [@numeric], @symbol
+    assert_wrong_rtn Numeric >= Numeric, [@numeric], true
 
     assert_wrong_rtn Numeric >= Numeric >= Numeric, [@numeric, @numeric], @array
     assert_wrong_rtn Numeric >= Numeric >= Numeric, [@numeric, @numeric], @string
     assert_wrong_rtn Numeric >= Numeric >= Numeric, [@numeric, @numeric], @hash
     assert_wrong_rtn Numeric >= Numeric >= Numeric, [@numeric, @numeric], @symbol
+    assert_wrong_rtn Numeric >= Numeric >= Numeric, [@numeric, @numeric], true
   end
 
   def test_wrong_args_type
@@ -48,11 +50,13 @@ class TestHaskell < MiniTest::Unit::TestCase
     assert_wrong_arg Numeric >= Numeric, [@string], @numeric
     assert_wrong_arg Numeric >= Numeric, [@hash  ], @numeric
     assert_wrong_arg Numeric >= Numeric, [@symbol], @numeric
+    assert_wrong_arg Numeric >= Numeric, [true   ], @numeric
 
     assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @array ], @numeric
     assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @string], @numeric
     assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @hash  ], @numeric
     assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, @symbol], @numeric
+    assert_wrong_arg Numeric >= Numeric >= Numeric, [@numeric, true   ], @numeric
   end
 
   def test_any
