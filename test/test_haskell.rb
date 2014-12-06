@@ -86,9 +86,10 @@ class TestHaskell < MiniTest::Unit::TestCase
 
     def define_test_method(type_list, args, val)
       klass = Class.new.class_eval <<-RUBY_CODE
-        type #{obj_literal(type_list)}, def call(#{arg_literal(args.count)})
+        def call(#{arg_literal(args.count)})
           #{obj_literal(val)}
         end
+        type #{obj_literal(type_list)}, :call
       RUBY_CODE
 
       klass.new
