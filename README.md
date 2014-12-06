@@ -33,6 +33,38 @@ class MyClass
 end
 ```
 
+## Feature
+### Typed method can coexist with non-typed method
+
+```ruby
+# It's totally OK!!
+class MyClass
+  type Numeric >= Numeric >= Numeric, def sum(x, y)
+    x + y
+  end
+
+  def wrong_sum(x, y)
+    'string'
+  end
+end
+```
+
+### Duck typing
+
+```ruby
+
+class MyClass
+  type Any >= Numeric, def foo(any_obj)
+    1
+  end
+end
+
+# It's totally OK!!
+MyClass.new.foo(1)
+# It's totally OK!!
+MyClass.new.foo('str')
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
