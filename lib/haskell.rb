@@ -8,8 +8,8 @@ module Haskell; end
 # New Class(Type)
 class  Any;     end
 module Boolean; end
-TrueClass.include(Boolean)
-FalseClass.include(Boolean)
+TrueClass.send(:include, Boolean)
+FalseClass.send(:include, Boolean)
 
 class Module
   private
