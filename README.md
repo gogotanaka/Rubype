@@ -99,14 +99,24 @@ Or install it yourself as:
 
     $ gem install haskell
 
-## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/haskell/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+### Contributing
 
+Fork it ( https://github.com/[my-github-username]/haskell/fork )
+
+Create your feature branch (`git checkout -b my-new-feature`)
+
+    $ bundle install --path vendor/bundle
+
+Commit your changes (`git commit -am 'Add some feature'`)
+
+    $ bundle exec rake test
+
+    > 5 runs, 39 assertions, 0 failures, 0 errors, 0 skips
+
+Push to the branch (`git push origin my-new-feature`)
+
+Create a new Pull Request
 
 ## Credits
 [@chancancode](https://github.com/chancancode) first brought this to my attention. I've stolen some idea from him.
