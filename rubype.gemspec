@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.extensions    = ["ext/rubype/extconf.rb"]
   spec.summary       = %q{Ruby with type.}
   spec.description   = %q{Ruby with type.}
-  spec.homepage      = "http://azabuhs.org/"
+  spec.homepage      = "http://gogotanaka.me/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
