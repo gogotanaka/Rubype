@@ -12,12 +12,12 @@ class MyClass
   def sum(x, y)
     x + y
   end
-  type Numeric, Numeric >= Numeric, :sum
+  typesig sum: [Numeric, Numeric => Numeric]
 
   def wrong_sum(x, y)
     'string'
   end
-  type Numeric, Numeric >= Numeric, :sum
+  typesig wrong_sum: [Numeric, Numeric => Numeric]
 end
 
 MyClass.new.sum(1, 2)
@@ -29,23 +29,14 @@ MyClass.new.sum(1, 'string')
 MyClass.new.wrong_sum(1, 2)
 #=> TypeError: Expected wrong_sum to return Numeric but got "str" instead
 
-# ex2: (Ruby 2.1.0+)
-class MyClass
-  type Numeric, Numeric >= Numeric, def sum(x, y)
-    x + y
-  end
 
-  type Numeric, Numeric >= Numeric, def wrong_sum(x, y)
-    'string'
-  end
-end
-
-# ex3: (Ruby 2.1.0+)
+# ex2
 class People
   type People >= Any, def marry(people)
     # Your Ruby code as usual
   end
 end
+typesig marry: [People => Any]
 
 People.new.marry(People.new)
 #=> no error
@@ -63,9 +54,9 @@ class MyClass
   def sum(x, y)
     x + y
   end
-  type Numeric, Numeric >= Numeric, :sum
+  typesig sum: [Numeric, Numeric => Numeric]
 
-  def wrong_sum(x, y)
+  def sum_without_type(x, y)
     'string'
   end
 end
@@ -79,7 +70,7 @@ class MyClass
   def foo(any_obj)
     1
   end
-  type Any >= Numeric, :foo
+  typesig sum: [Any => Numeric]
 end
 
 # It's totally OK!!

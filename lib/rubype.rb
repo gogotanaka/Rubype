@@ -1,5 +1,4 @@
 require "rubype/rubype"
-require 'rubype/type_pair'
 
 # Builtin Contracts
 class  Any;     end
@@ -14,13 +13,14 @@ class Module
     @__rubype__
   end
 
-  def type(*arguments)
-    *arg_types, type_pair, meth = arguments
+  def typesig(hash)
+    meth = hash.keys.first
+    *arg_types, type_pair = hash.values.first
 
     __rubype__.send(:define_method, meth) do |*args, &block|
-      ::Rubype.assert_arg_type(meth, args, arg_types << type_pair.last_arg_type)
+      ::Rubype.assert_arg_type(meth, args, arg_types << type_pair.keys.first)
       rtn = super(*args, &block)
-      ::Rubype.assert_trn_type(meth, rtn, type_pair.rtn_type)
+      ::Rubype.assert_trn_type(meth, rtn, type_pair.values.first)
       rtn
     end
     self
