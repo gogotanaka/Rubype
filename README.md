@@ -7,7 +7,7 @@ end
 typesig sum: [Numeric, Numeric => Numeric]
 ```
 
-This gem make it possible to make sure assertions about your code.
+This gem brings you advantage of type without changing existing code's behavior.
 
 Matz has mentioned Ruby3.0 with static type at some confluences. But almost all rubyists(include me) are not sure how typed Ruby is.
 
