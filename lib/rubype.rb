@@ -1,3 +1,4 @@
+require "rubype/rubype"
 require 'rubype/type_pair'
 
 # Builtin Contracts
