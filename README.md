@@ -38,7 +38,7 @@ class MyClass
   def foo(any_obj)
     1
   end
-  typesig sum: [Any => Numeric]
+  typesig foo: [Any => Numeric]
 end
 
 # It's totally OK!!
