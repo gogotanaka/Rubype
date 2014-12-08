@@ -1,12 +1,13 @@
 # Ruby + Type = Rubype
 
 ```rb
+# Assert class of both args is Numeric and class of return is String
 def sum(x, y)
-  x + y
+  (x + y).to_s
 end
-typesig sum: [Numeric, Numeric => Numeric]
+typesig sum: [Numeric, Numeric => String]
 
-#
+# Assert first arg has method #to_i
 def sum(x, y)
   x.to_i + y
 end
@@ -24,7 +25,7 @@ This gem brings you advantage of type without changing existing code's behavior.
 ```rb
 require 'rubype'
 
-# ex1
+# ex1: Assert class of args and return
 class MyClass
   def sum(x, y)
     x + y
@@ -47,7 +48,22 @@ MyClass.new.wrong_sum(1, 2)
 #=> Rubype::ReturnTypeError: Expected MyClass#wrong_sum to return Numeric but got "string" instead
 
 
-# ex2
+# ex2: Assert object has specified method
+class MyClass
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig sum: [:to_i, Numeric => Numeric]
+end
+
+MyClass.new.sum('1', 2)
+#=> 3
+
+MyClass.new.sum(:has_no_to_i, 2)
+#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1th argument to have method #to_i but got :has_no_to_i instead
+
+
+# ex3: You can use Any class, if you want
 class People
   def marry(people)
     # Your Ruby code as usual
@@ -61,20 +77,6 @@ People.new.marry(People.new)
 People.new.marry('non people')
 #=> Rubype::ArgumentTypeError: Expected People#marry's 1th argument to be People but got "non people" instead
 
-
-# ex3
-class MyClass
-  def sum(x, y)
-    x.to_i + y
-  end
-  typesig sum: [:to_i, Numeric => Numeric]
-end
-
-MyClass.new.sum('1', 2)
-#=> 3
-
-MyClass.new.sum(:has_no_to_i, 2)
-#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1th argument to have method #to_i but got :has_no_to_i instead
 ```
 
 ### Typed method can coexist with non-typed method
