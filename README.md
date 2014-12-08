@@ -5,47 +5,17 @@ def sum(x, y)
   x + y
 end
 typesig sum: [Numeric, Numeric => Numeric]
+
+#
+def sum(x, y)
+  x.to_i + y
+end
+typesig sum: [:to_i, Numeric => Numeric]
 ```
 
 This gem brings you advantage of type without changing existing code's behavior.
 
-Matz has mentioned Ruby3.0 with static type at some confluences. But almost all rubyists(include me) are not sure how typed Ruby is.
-
-But it's worth thinking more. This gem is kind of trial without so much side-effect.
-
 # Feature
-### Typed method can coexist with non-typed method
-
-```ruby
-# It's totally OK!!
-class MyClass
-  def method_with_type(x, y)
-    x + y
-  end
-  typesig sum: [Numeric, Numeric => Numeric]
-
-  def method_without_type(x, y)
-    'string'
-  end
-end
-```
-
-### Duck typing
-You can use `Any` class.
-```ruby
-
-class MyClass
-  def foo(any_obj)
-    1
-  end
-  typesig sum: [Any => Numeric]
-end
-
-# It's totally OK!!
-MyClass.new.foo(1)
-# It's totally OK!!
-MyClass.new.foo('str')
-```
 
 ### Advantage of type
 * Meaningful error
@@ -71,10 +41,10 @@ MyClass.new.sum(1, 2)
 #=> 3
 
 MyClass.new.sum(1, 'string')
-#=> ArgumentError: Wrong type of argument, type of "str" should be Numeric
+#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 2th argument to be Numeric but got "string" instead
 
 MyClass.new.wrong_sum(1, 2)
-#=> TypeError: Expected wrong_sum to return Numeric but got "str" instead
+#=> Rubype::ReturnTypeError: Expected MyClass#wrong_sum to return Numeric but got "string" instead
 
 
 # ex2
@@ -82,16 +52,74 @@ class People
   def marry(people)
     # Your Ruby code as usual
   end
+  typesig marry: [People => Any]
 end
-typesig marry: [People => Any]
 
 People.new.marry(People.new)
 #=> no error
 
 People.new.marry('non people')
-#=> ArgumentError: Wrong type of argument, type of "non people" should be People
+#=> Rubype::ArgumentTypeError: Expected People#marry's 1th argument to be People but got "non people" instead
+
+
+# ex3
+class MyClass
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig sum: [:to_i, Numeric => Numeric]
+end
+
+MyClass.new.sum('1', 2)
+#=> 3
+
+MyClass.new.sum(:has_no_to_i, 2)
+#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1th argument to have method #to_i but got :has_no_to_i instead
 ```
 
+### Typed method can coexist with non-typed method
+
+```ruby
+# It's totally OK!!
+class MyClass
+  def method_with_type(x, y)
+    x + y
+  end
+  typesig sum: [Numeric, Numeric => Numeric]
+
+  def method_without_type(x, y)
+    'string'
+  end
+end
+```
+
+### Duck typing
+You can use `Any` class.
+```ruby
+
+class MyClass
+  def foo(any_obj)
+    1
+  end
+  typesig sum: [Any => Numeric]
+
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig sum: [:to_i, Numeric => Numeric]
+end
+
+# It's totally OK!!
+MyClass.new.foo(1)
+# It's totally OK!!
+MyClass.new.foo(:sym)
+
+
+# It's totally OK!!
+MyClass.new.sum(1, 2)
+# It's totally OK!!
+MyClass.new.sum('1', 2)
+```
 
 
 ## Installation

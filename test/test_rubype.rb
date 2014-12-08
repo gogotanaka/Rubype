@@ -13,7 +13,7 @@ class TestRubype < MiniTest::Unit::TestCase
     @hash    = { test: :hash }
   end
 
-  def test_correct_type
+  def test_correct_type_by_class
     assert_correct_type [Numeric => Numeric], [@numeric], @numeric
     assert_correct_type [Numeric => Array  ], [@numeric], @array
     assert_correct_type [Numeric => String ], [@numeric], @string
@@ -29,6 +29,17 @@ class TestRubype < MiniTest::Unit::TestCase
     assert_correct_type [Boolean, Symbol  => Symbol ], [true, @symbol ], @symbol
   end
 
+  def test_correct_type_by_sym
+    assert_correct_type [Numeric => :to_i], [@numeric], @numeric
+    assert_correct_type [Numeric => :to_i], [@numeric], @string
+
+    assert_correct_type [Numeric => :to_s], [@numeric], @numeric
+    assert_correct_type [Numeric => :to_s], [@numeric], @string
+    assert_correct_type [Numeric => :to_s], [@numeric], @symbol
+    assert_correct_type [Numeric => :to_s], [@numeric], @array
+    assert_correct_type [Numeric => :to_s], [@numeric], @hash
+  end
+
   def test_wrong_return_type
     assert_wrong_rtn [Numeric => Numeric], [@numeric], @array
     assert_wrong_rtn [Numeric => Numeric], [@numeric], @string
@@ -41,6 +52,10 @@ class TestRubype < MiniTest::Unit::TestCase
     assert_wrong_rtn [Numeric, Numeric => Numeric], [@numeric, @numeric], @hash
     assert_wrong_rtn [Numeric, Numeric => Numeric], [@numeric, @numeric], @symbol
     assert_wrong_rtn [Numeric, Numeric => Numeric], [@numeric, @numeric], true
+
+    assert_wrong_rtn [Numeric => :to_i], [@numeric], @symbol
+    assert_wrong_rtn [Numeric => :to_i], [@numeric], @array
+    assert_wrong_rtn [Numeric => :to_i], [@numeric], @hash
   end
 
   def test_wrong_args_type
@@ -55,6 +70,11 @@ class TestRubype < MiniTest::Unit::TestCase
     assert_wrong_arg [Numeric, Numeric => Numeric], [@numeric, @hash  ], @numeric
     assert_wrong_arg [Numeric, Numeric => Numeric], [@numeric, @symbol], @numeric
     assert_wrong_arg [Numeric, Numeric => Numeric], [@numeric, true   ], @numeric
+
+    assert_wrong_arg [Numeric => :to_i], [@array ], @numeric
+    assert_wrong_arg [Numeric => :to_i], [@hash  ], @numeric
+    assert_wrong_arg [Numeric => :to_i], [@symbol], @numeric
+    assert_wrong_arg [Numeric => :to_i], [true   ], @numeric
   end
 
   def test_any
