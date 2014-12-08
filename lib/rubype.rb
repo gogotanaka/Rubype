@@ -6,12 +6,15 @@ FalseClass.send(:include, Boolean)
 
 class Module
   private
+
+  # @return [Module]
   def __rubype__
     prepend (@__rubype__ = Module.new) unless @__rubype__
     @__rubype__
   end
 
-  # @param hash [Hash] {method_name: [ArgClass1, ArgClass2, ... ArgClassn => RtnClass]}
+  # @param hash [Hash] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
+  # @return self
   def typesig(hash)
     meth = hash.keys.first
     *arg_types, type_pair = hash.values.first
@@ -60,7 +63,7 @@ module Rubype
           "Expected #{caller.class}##{meth} to return #{type_info} but got #{rtn.inspect} instead"
       when :need_correct_method
         raise ReturnTypeError,
-          "Expected #{caller.class}##{meth} to have method ##{type_info} but got #{rtn.inspect} instead"
+          "Expected #{caller.class}##{meth} to return object which has method ##{type_info} but got #{rtn.inspect} instead"
       end
     end
 
