@@ -79,11 +79,11 @@ class TestRubype < MiniTest::Unit::TestCase
     end
 
     def assert_wrong_arg(type_list, args, val)
-      assert_raises(ArgumentError) { define_test_method(type_list, args, val).call(*args) }
+      assert_raises(Rubype::ArgumentTypeError) { define_test_method(type_list, args, val).call(*args) }
     end
 
     def assert_wrong_rtn(type_list, args, val)
-      assert_raises(TypeError) { define_test_method(type_list, args, val).call(*args) }
+      assert_raises(Rubype::ReturnTypeError) { define_test_method(type_list, args, val).call(*args) }
     end
 
     def define_test_method(type_list, args, val)

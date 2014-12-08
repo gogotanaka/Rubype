@@ -27,6 +27,9 @@ class Module
 end
 
 module Rubype
+  class ArgumentTypeError < ::TypeError; end
+  class ReturnTypeError   < ::TypeError; end
+
   class << self
     private
 
@@ -36,7 +39,7 @@ module Rubype
     def assert_arg_type(meth, args, klasses)
       args.each_with_index do |arg, i|
         if wrong_type?(arg, klasses[i])
-          raise ArgumentError, "Wrong type of argument, type of #{arg.inspect} should be #{klasses[i]}"
+          raise ArgumentTypeError, "Wrong type of argument, type of #{arg.inspect} should be #{klasses[i]}"
         end
       end
     end
@@ -46,7 +49,7 @@ module Rubype
     # @param klass [Class]
     def assert_trn_type(meth, rtn, klass)
       if wrong_type?(rtn, klass)
-        raise TypeError, "Expected #{meth} to return #{klass} but got #{rtn.inspect} instead"
+        raise ReturnTypeError, "Expected #{meth} to return #{klass} but got #{rtn.inspect} instead"
       end
     end
 
