@@ -14,6 +14,7 @@ end
 typesig sum: [:to_i, Numeric => Numeric]
 ```
 
+
 This gem brings you advantage of type without changing existing code's behavior.
 
 # Feature
@@ -98,12 +99,11 @@ end
 ### Duck typing
 You can use `Any` class.
 ```ruby
-
 class MyClass
   def foo(any_obj)
     1
   end
-  typesig sum: [Any => Numeric]
+  typesig foo: [Any => Numeric]
 
   def sum(x, y)
     x.to_i + y
@@ -146,7 +146,7 @@ Commit your changes (`git commit -am 'Add some feature'`)
 
 Push to the branch (`git push origin my-new-feature`)
 
-Create a new Pull Request
+Create a new Pull Request to `develop` branch
 
 ## Credits
 [@chancancode](https://github.com/chancancode) and [This article](http://blog.codeclimate.com/blog/2014/05/06/gradual-type-checking-for-ruby/) first brought this to my attention. I've stolen some idea from them.
