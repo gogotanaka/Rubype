@@ -4,6 +4,6 @@ rvm:
   - 2.0.0
   - rbx-2
   - ruby-head
-  - jruby-head
+  # - jruby-head
 notifications:
   email: false
