@@ -12,33 +12,55 @@ class Module
       @__rubype__
     end
 
-    # @param type_info_hash [Hash] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
+    # @param meth [Symbol] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
+    # @param type_info_arr [Hash] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
     # @return self
-    def typesig type_info_hash
-      meth, arg_types, rtn_type = *::Rubype.send(:strip_type_info, type_info_hash)
-
-      __rubype__.send(:define_method, meth) do |*args, &block|
-        ::Rubype.send(:assert_arg_type, self, meth, args, arg_types)
-        rtn = super(*args, &block)
-        ::Rubype.send(:assert_trn_type, self, meth, rtn, rtn_type)
-        rtn
-      end
+    def typesig(meth, type_info_arr)
+      ::Rubype.send(:define_typed_method, self, meth, type_info_arr, __rubype__)
       self
     end
 end
 
+class Method
+  def type_info
+    if methods_hash = Rubype.typed_method_info[owner]
+      methods_hash[name]
+    end
+  end
+end
+require 'pry'
 module Rubype
   class ArgumentTypeError < ::TypeError; end
   class ReturnTypeError   < ::TypeError; end
+  @@typed_method_info = Hash.new({})
 
   class << self
+    def typed_method_info
+      @@typed_method_info
+    end
+
     private
-      # @param type_info_hash [Hash] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
-      # @return method_name [Symbol], arg_types [Array<Class, Symbol>], rtn_type [Class, Symbol]
-      def strip_type_info(type_info_hash)
-        meth, arr = type_info_hash.first
-        *arg_types, type_pair = arr
-        [meth, arg_types << type_pair.first[0], type_pair.first[1]]
+       # @param caller [Object]
+       # @param type_info_arr [Array]
+       # @param module [Module]
+      def define_typed_method(meth_caller, meth, type_info_arr, __rubype__)
+        arg_types, rtn_type = *strip_type_info(type_info_arr)
+        @@typed_method_info[meth_caller][meth] = {
+          arg_types => rtn_type
+        }
+        __rubype__.send(:define_method, meth) do |*args, &block|
+          ::Rubype.send(:assert_arg_type, meth_caller, meth, args, arg_types)
+          rtn = super(*args, &block)
+          ::Rubype.send(:assert_trn_type, meth_caller, meth, rtn, rtn_type)
+          rtn
+        end
+      end
+
+      # @param type_info_arr [Array]
+      # @return arg_types [Array<Class, Symbol>], rtn_type [Class, Symbol]
+      def strip_type_info(type_info_arr)
+        arg_types, rtn_type = type_info_arr.first
+        [arg_types, rtn_type]
       end
 
       # @param caller [Module]
