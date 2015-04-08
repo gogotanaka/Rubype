@@ -125,6 +125,19 @@ MyClass.new.sum(1, 2)
 MyClass.new.sum('1', 2)
 ```
 
+### Check type info everywhere!
+```ruby
+class MyClass
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig :sum, [:to_i, Numeric] => Numeric
+end
+
+MyClass.new.method(:foo).type_info
+# => [:to_i, Numeric] => Numeric
+
+```
 
 ## Installation
 
