@@ -24,6 +24,7 @@ This gem brings you advantage of type without changing existing code's behavior.
 ### Advantage of type
 * Meaningful error
 * Executable documentation
+* Don't need to check type of method's arguments and return .
 
 ```rb
 require 'rubype'
@@ -134,8 +135,14 @@ class MyClass
   typesig :sum, [:to_i, Numeric] => Numeric
 end
 
-MyClass.new.method(:foo).type_info
+MyClass.new.method(:sum).type_info
 # => [:to_i, Numeric] => Numeric
+
+MyClass.new.method(:sum).arg_types
+# => [:to_i, Numeric]
+
+MyClass.new.method(:sum).return_type
+# => Numeric
 
 ```
 
@@ -161,7 +168,7 @@ Commit your changes (`git commit -am 'Add some feature'`)
 
     Finished in 0.010961s, 547.3953 runs/s, 5017.7903 assertions/s.
 
-    6 runs, 55 assertions, 0 failures, 0 errors, 0 skips
+    7 runs, 61 assertions, 0 failures, 0 errors, 0 skips
 
 Push to the branch (`git push origin my-new-feature`)
 
