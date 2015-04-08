@@ -7,13 +7,13 @@
 def sum(x, y)
   (x + y).to_s
 end
-typesig sum: [Numeric, Numeric => String]
+typesig :sum, [Numeric, Numeric] => String
 
 # Assert first arg has method #to_i
 def sum(x, y)
   x.to_i + y
 end
-typesig sum: [:to_i, Numeric => Numeric]
+typesig :sum, [:to_i, Numeric] => Numeric
 ```
 
 
@@ -33,12 +33,12 @@ class MyClass
   def sum(x, y)
     x + y
   end
-  typesig sum: [Numeric, Numeric => Numeric]
+  typesig :sum, [Numeric, Numeric] => Numeric
 
   def wrong_sum(x, y)
     'string'
   end
-  typesig wrong_sum: [Numeric, Numeric => Numeric]
+  typesig :wrong_sum, [Numeric, Numeric] => Numeric
 end
 
 MyClass.new.sum(1, 2)
@@ -56,7 +56,7 @@ class MyClass
   def sum(x, y)
     x.to_i + y
   end
-  typesig sum: [:to_i, Numeric => Numeric]
+  typesig :sum, [:to_i, Numeric] => Numeric
 end
 
 MyClass.new.sum('1', 2)
@@ -71,7 +71,7 @@ class People
   def marry(people)
     # Your Ruby code as usual
   end
-  typesig marry: [People => Any]
+  typesig :marry, [People] => Any
 end
 
 People.new.marry(People.new)
@@ -90,7 +90,7 @@ class MyClass
   def method_with_type(x, y)
     x + y
   end
-  typesig sum: [Numeric, Numeric => Numeric]
+  typesig :sum, [Numeric, Numeric] => Numeric
 
   def method_without_type(x, y)
     'string'
@@ -105,12 +105,12 @@ class MyClass
   def foo(any_obj)
     1
   end
-  typesig foo: [Any => Numeric]
+  typesig :foo, [Any] => Numeric
 
   def sum(x, y)
     x.to_i + y
   end
-  typesig sum: [:to_i, Numeric => Numeric]
+  typesig :sum, [:to_i, Numeric] => Numeric
 end
 
 # It's totally OK!!
@@ -144,7 +144,11 @@ Commit your changes (`git commit -am 'Add some feature'`)
 
     $ bundle exec rake test
 
-    > 5 runs, 39 assertions, 0 failures, 0 errors, 0 skips
+    ......
+
+    Finished in 0.010961s, 547.3953 runs/s, 5017.7903 assertions/s.
+
+    6 runs, 55 assertions, 0 failures, 0 errors, 0 skips
 
 Push to the branch (`git push origin my-new-feature`)
 

@@ -89,6 +89,16 @@ class TestRubype < MiniTest::Unit::TestCase
     assert_correct_type({ [Any, Any] => Any }, [@numeric, @symbol], @numeric)
   end
 
+  def test_type_info
+    klass = Class.new.class_eval <<-RUBY_CODE
+      def test_mth
+      end
+      typesig :test_mth, [Numeric, Numeric] => String
+    RUBY_CODE
+
+    assert_equal klass.new.method(:test_mth).type_info, { [Numeric, Numeric] => String }
+  end
+
   private
     def assert_equal_to_s(str, val)
       assert_equal str, val.to_s

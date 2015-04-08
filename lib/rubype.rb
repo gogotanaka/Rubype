@@ -12,11 +12,11 @@ class Module
       @__rubype__
     end
 
-    # @param meth [Symbol] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
-    # @param type_info_arr [Hash] { method_name: [ArgInfo1, ArgInfo2, ... ArgInfon => RtnInfo] }
+    # @param meth [Symbol]
+    # @param type_info_hash [Hash] { [ArgInfo_1, ArgInfo_2, ... ArgInfo_n] => RtnInfo }
     # @return self
-    def typesig(meth, type_info_arr)
-      ::Rubype.send(:define_typed_method, self, meth, type_info_arr, __rubype__)
+    def typesig(meth, type_info_hash)
+      ::Rubype.send(:define_typed_method, self, meth, type_info_hash, __rubype__)
       self
     end
 end
@@ -28,7 +28,7 @@ class Method
     end
   end
 end
-require 'pry'
+
 module Rubype
   class ArgumentTypeError < ::TypeError; end
   class ReturnTypeError   < ::TypeError; end
@@ -41,10 +41,10 @@ module Rubype
 
     private
        # @param caller [Object]
-       # @param type_info_arr [Array]
+       # @param type_info_hash [Hash] { [ArgInfo_1, ArgInfo_2, ... ArgInfo_n] => RtnInfo }
        # @param module [Module]
-      def define_typed_method(meth_caller, meth, type_info_arr, __rubype__)
-        arg_types, rtn_type = *strip_type_info(type_info_arr)
+      def define_typed_method(meth_caller, meth, type_info_hash, __rubype__)
+        arg_types, rtn_type = *strip_type_info(type_info_hash)
         @@typed_method_info[meth_caller][meth] = {
           arg_types => rtn_type
         }
@@ -56,10 +56,10 @@ module Rubype
         end
       end
 
-      # @param type_info_arr [Array]
+      # @param type_info_hash [Hash] { [ArgInfo_1, ArgInfo_2, ... ArgInfo_n] => RtnInfo }
       # @return arg_types [Array<Class, Symbol>], rtn_type [Class, Symbol]
-      def strip_type_info(type_info_arr)
-        arg_types, rtn_type = type_info_arr.first
+      def strip_type_info(type_info_hash)
+        arg_types, rtn_type = type_info_hash.first
         [arg_types, rtn_type]
       end
 
