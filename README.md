@@ -150,6 +150,8 @@ MyClass.new.method(:sum).return_type
 
 gem install rubype or add gem 'rubype' to your Gemfile.
 
+And `reuire 'rubype'`, enjoy typed Ruby.
+
 This gem requires Ruby 2.0.0+.
 
 ### Contributing
