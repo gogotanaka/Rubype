@@ -99,7 +99,7 @@ class TestRubype < MiniTest::Unit::TestCase
 
     meth = klass.new.method(:test_mth)
     assert_equal meth.type_info, { [Numeric, Numeric] => String }
-    assert_equal meth.args_type, [Numeric, Numeric]
+    assert_equal meth.arg_types, [Numeric, Numeric]
     assert_equal meth.return_type, String
 
     err = assert_raises(Rubype::ReturnTypeError) { meth.(1,2) }

@@ -28,7 +28,7 @@ class Method
     end
   end
 
-  def args_type
+  def arg_types
     type_info.first.first if type_info
   end
 
