@@ -27,6 +27,14 @@ class Method
       methods_hash[name]
     end
   end
+
+  def args_type
+    type_info.first.first if type_info
+  end
+
+  def return_type
+    type_info.first.last if type_info
+  end
 end
 
 module Rubype
@@ -43,15 +51,15 @@ module Rubype
        # @param caller [Object]
        # @param type_info_hash [Hash] { [ArgInfo_1, ArgInfo_2, ... ArgInfo_n] => RtnInfo }
        # @param module [Module]
-      def define_typed_method(meth_caller, meth, type_info_hash, __rubype__)
+      def define_typed_method(owner, meth, type_info_hash, __rubype__)
         arg_types, rtn_type = *strip_type_info(type_info_hash)
-        @@typed_method_info[meth_caller][meth] = {
+        @@typed_method_info[owner][meth] = {
           arg_types => rtn_type
         }
         __rubype__.send(:define_method, meth) do |*args, &block|
-          ::Rubype.send(:assert_arg_type, meth_caller, meth, args, arg_types)
+          ::Rubype.send(:assert_arg_type, self, meth, args, arg_types)
           rtn = super(*args, &block)
-          ::Rubype.send(:assert_trn_type, meth_caller, meth, rtn, rtn_type)
+          ::Rubype.send(:assert_trn_type, self, meth, rtn, rtn_type)
           rtn
         end
       end
@@ -67,15 +75,15 @@ module Rubype
       # @param meth [Symbol]
       # @param args [Array<Object>]
       # @param type_infos [Array<Class, Symbol>]
-      def assert_arg_type(caller, meth, args, type_infos)
+      def assert_arg_type(meth_caller, meth, args, type_infos)
         args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
           case type_check(arg, type_info)
           when :need_correct_class
             raise ArgumentTypeError,
-              "Expected #{caller.class}##{meth}'s #{i}th argument to be #{type_info} but got #{arg.inspect} instead"
+              "Expected #{meth_caller.class}##{meth}'s #{i}th argument to be #{type_info} but got #{arg.inspect} instead"
           when :need_correct_method
             raise ArgumentTypeError,
-              "Expected #{caller.class}##{meth}'s #{i}th argument to have method ##{type_info} but got #{arg.inspect} instead"
+              "Expected #{meth_caller.class}##{meth}'s #{i}th argument to have method ##{type_info} but got #{arg.inspect} instead"
           end
         end
       end
@@ -83,14 +91,14 @@ module Rubype
       # @param caller [Module]
       # @param rtn [Object]
       # @param type_info [Class, Symbol]
-      def assert_trn_type(caller, meth, rtn, type_info)
+      def assert_trn_type(meth_caller, meth, rtn, type_info)
         case type_check(rtn, type_info)
         when :need_correct_class
           raise ReturnTypeError,
-            "Expected #{caller.class}##{meth} to return #{type_info} but got #{rtn.inspect} instead"
+            "Expected #{meth_caller.class}##{meth} to return #{type_info} but got #{rtn.inspect} instead"
         when :need_correct_method
           raise ReturnTypeError,
-            "Expected #{caller.class}##{meth} to return object which has method ##{type_info} but got #{rtn.inspect} instead"
+            "Expected #{meth_caller.class}##{meth} to return object which has method ##{type_info} but got #{rtn.inspect} instead"
         end
       end
 
