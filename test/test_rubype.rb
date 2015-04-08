@@ -91,12 +91,22 @@ class TestRubype < MiniTest::Unit::TestCase
 
   def test_type_info
     klass = Class.new.class_eval <<-RUBY_CODE
-      def test_mth
+      def test_mth(n1, n2)
       end
       typesig :test_mth, [Numeric, Numeric] => String
     RUBY_CODE
+    Object.const_set('MyClass', klass)
 
-    assert_equal klass.new.method(:test_mth).type_info, { [Numeric, Numeric] => String }
+    meth = klass.new.method(:test_mth)
+    assert_equal meth.type_info, { [Numeric, Numeric] => String }
+    assert_equal meth.arg_types, [Numeric, Numeric]
+    assert_equal meth.return_type, String
+
+    err = assert_raises(Rubype::ReturnTypeError) { meth.(1,2) }
+    assert_equal err.message, "Expected MyClass#test_mth to return String but got nil instead"
+
+    err = assert_raises(Rubype::ArgumentTypeError) { meth.(1,'2') }
+    assert_equal err.message, "Expected MyClass#test_mth's 2th argument to be Numeric but got \"2\" instead"
   end
 
   private
