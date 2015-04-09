@@ -19,6 +19,16 @@ typesig :sum, [:to_i, Numeric] => Numeric
 
 This gem brings you advantage of type without changing existing code's behavior.
 
+## Good point:
+* Meaningful error
+* Executable documentation
+* Don't need to check type of method's arguments and return.
+* Type info itself is object, you can check it and even change it during run time.
+
+## Bad point:
+* Checking type run every time method call... it might be overhead, but it's not big deal. 
+* There is no static analysis.
+
 # Feature
 
 ### Advantage of type
@@ -91,7 +101,7 @@ class MyClass
   def method_with_type(x, y)
     x + y
   end
-  typesig :sum, [Numeric, Numeric] => Numeric
+  typesig :method_with_type, [Numeric, Numeric] => Numeric
 
   def method_without_type(x, y)
     'string'
