@@ -27,7 +27,7 @@ This gem brings you advantage of type without changing existing code's behavior.
 * Type info itself is object, you can check it and even change it during run time.
 
 ## Bad point:
-* Checking type run every time method call... it might be overhead, but it's not big deal. 
+* Checking type run every time method call... it might be overhead, but it's not big deal.
 * There is no static analysis.
 
 # Feature
@@ -156,6 +156,64 @@ MyClass.new.method(:sum).return_type
 # => Numeric
 
 ```
+
+## Benchmarks
+
+```ruby
+require 'rubype'
+require 'benchmark'
+
+class RubypeCommonClass
+  def sum(x, y)
+    x + y
+  end
+  typesig :sum, [Numeric, Numeric] => Numeric
+end
+
+class CommonClass
+  def sum(x, y)
+    x + y
+  end
+end
+
+class RubypeDucktypeClass
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig :sum, [:to_i, Numeric] => Numeric
+end
+
+class DucktypeClass
+  def sum(x, y)
+    x.to_i + y
+  end
+end
+
+N = 100_000
+Benchmark.bm("RubypeDucktypeClass".length + 3) do |x|
+  x.report("RubypeCommonClass") { N.times { RubypeCommonClass.new.sum(1, 5) } }
+  x.report("CommonClass")       { N.times { CommonClass.new.sum(1, 5) } }
+end
+
+Benchmark.bm("RubypeDucktypeClass".length + 3) do |x|
+  x.report("RubypeDucktypeClass")  { N.times { RubypeDucktypeClass.new.sum(1, 5) } }
+  x.report("DucktypeClass")        { N.times { DucktypeClass.new.sum(1, 5) } }
+end
+```
+
+### Results
+Ruby 2.2.0, Macbook Pro 2.9Ghz Intel Core i7, 8GB RAM
+
+```
+                             user     system      total        real
+RubypeCommonClass        0.530000   0.010000   0.540000 (  0.566493)
+CommonClass              0.030000   0.000000   0.030000 (  0.035718)
+                             user     system      total        real
+RubypeDucktypeClass      0.590000   0.010000   0.600000 (  0.682504)
+DucktypeClass            0.030000   0.000000   0.030000 (  0.029856)
+```
+
+
 
 ## Installation
 
