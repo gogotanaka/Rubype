@@ -22,16 +22,19 @@ class Module
 end
 
 class Method
+  # @return [Hash]: { [ArgInfo_1, ArgInfo_2, ... ArgInfo_n] => RtnInfo }
   def type_info
     if methods_hash = Rubype.typed_method_info[owner]
       methods_hash[name]
     end
   end
-
+  
+  # @return [Array<Class, Symbol>]: [ArgInfo_1, ArgInfo_2, ... ArgInfo_n]
   def arg_types
     type_info.first.first if type_info
   end
-
+  
+  # @return [Class, Symbol]: RtnInfo
   def return_type
     type_info.first.last if type_info
   end
