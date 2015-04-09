@@ -103,10 +103,10 @@ class TestRubype < MiniTest::Unit::TestCase
     assert_equal meth.return_type, String
 
     err = assert_raises(Rubype::ReturnTypeError) { meth.(1,2) }
-    assert_equal err.message, "Expected MyClass#test_mth to return String but got nil instead"
+    assert_equal err.message, %|Expected MyClass#test_mth to return String but got nil instead|
 
     err = assert_raises(Rubype::ArgumentTypeError) { meth.(1,'2') }
-    assert_equal err.message, "Expected MyClass#test_mth's 2nd argument to be Numeric but got \"2\" instead"
+    assert_equal err.message, %|Expected MyClass#test_mth's 2nd argument to be Numeric but got "2" instead|
   end
 
   private
