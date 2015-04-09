@@ -160,60 +160,105 @@ MyClass.new.method(:sum).return_type
 ## Benchmarks
 
 ```ruby
+require 'benchmark/ips'
 require 'rubype'
-require 'benchmark'
 
-class RubypeCommonClass
-  def sum(x, y)
-    x + y
+Benchmark.ips do |x|
+  class RubypeCommonClass
+    def sum(x, y)
+      x + y
+    end
+    typesig :sum, [Numeric, Numeric] => Numeric
   end
-  typesig :sum, [Numeric, Numeric] => Numeric
-end
 
-class CommonClass
-  def sum(x, y)
-    x + y
+  class CommonClass
+    def sum(x, y)
+      x + y
+    end
   end
-end
-
-class RubypeDucktypeClass
-  def sum(x, y)
-    x.to_i + y
+  
+  x.report('Rubype Common Class') do |times|
+    i = 0
+    while i < times
+      RubypeCommonClass.new.sum(1, 5)
+      i += 1
+    end
   end
-  typesig :sum, [:to_i, Numeric] => Numeric
-end
 
-class DucktypeClass
-  def sum(x, y)
-    x.to_i + y
+  x.report('Common Class') do |times|
+    i = 0
+    while i < times
+      CommonClass.new.sum(1, 5)
+      i += 1
+    end
   end
+
+  x.compare!
 end
 
-N = 100_000
-Benchmark.bm("RubypeDucktypeClass".length + 3) do |x|
-  x.report("RubypeCommonClass") { N.times { RubypeCommonClass.new.sum(1, 5) } }
-  x.report("CommonClass")       { N.times { CommonClass.new.sum(1, 5) } }
-end
+Benchmark.ips do |x|
+  class RubypeDucktypeClass
+    def sum(x, y)
+      x.to_i + y
+    end
+    typesig :sum, [:to_i, Numeric] => Numeric
+  end
 
-Benchmark.bm("RubypeDucktypeClass".length + 3) do |x|
-  x.report("RubypeDucktypeClass")  { N.times { RubypeDucktypeClass.new.sum(1, 5) } }
-  x.report("DucktypeClass")        { N.times { DucktypeClass.new.sum(1, 5) } }
+  class DucktypeClass
+    def sum(x, y)
+      x.to_i + y
+    end
+  end
+  
+  x.report('Rubype Ducktype Class') do |times|
+    i = 0
+    while i < times
+      RubypeDucktypeClass.new.sum(1, 5)
+      i += 1
+    end
+  end
+
+  x.report('Ducktype Class') do |times|
+    i = 0
+    while i < times
+      DucktypeClass
+      i += 1
+    end
+  end
+
+  x.compare!
 end
 ```
 
 ### Results
-Ruby 2.2.0, Macbook Pro 2.9Ghz Intel Core i7, 8GB RAM
+Ruby 2.2.1p85, Macbook Pro 2.7Ghz Intel Core i7, 16GB RAM
 
 ```
-                             user     system      total        real
-RubypeCommonClass        0.530000   0.010000   0.540000 (  0.566493)
-CommonClass              0.030000   0.000000   0.030000 (  0.035718)
-                             user     system      total        real
-RubypeDucktypeClass      0.590000   0.010000   0.600000 (  0.682504)
-DucktypeClass            0.030000   0.000000   0.030000 (  0.029856)
+Calculating -------------------------------------
+ Rubype Common Class    20.682k i/100ms
+        Common Class    74.524k i/100ms
+-------------------------------------------------
+ Rubype Common Class    337.553k (± 3.6%) i/s -      1.696M
+        Common Class      6.848M (±11.5%) i/s -     33.759M
+
+Comparison:
+        Common Class:  6848012.0 i/s
+ Rubype Common Class:   337553.4 i/s - 20.29x slower
+
+
+Calculating -------------------------------------
+Rubype Ducktype Class
+                        19.571k i/100ms
+      Ducktype Class    85.128k i/100ms
+-------------------------------------------------
+Rubype Ducktype Class
+                        323.503k (± 3.5%) i/s -      1.624M
+      Ducktype Class     49.759M (± 8.5%) i/s -    246.105M
+
+Comparison:
+       Ducktype Class: 49758853.9 i/s
+Rubype Ducktype Class:   323503.1 i/s - 153.81x slower 
 ```
-
-
 
 ## Installation
 
