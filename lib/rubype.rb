@@ -1,3 +1,5 @@
+require 'rubype/ordinal'
+
 # Builtin Contracts
 class  Any;     end
 module Boolean; end
@@ -28,12 +30,12 @@ class Method
       methods_hash[name]
     end
   end
-  
+
   # @return [Array<Class, Symbol>]: [ArgInfo_1, ArgInfo_2, ... ArgInfo_n]
   def arg_types
     type_info.first.first if type_info
   end
-  
+
   # @return [Class, Symbol]: RtnInfo
   def return_type
     type_info.first.last if type_info
@@ -83,10 +85,10 @@ module Rubype
           case type_check(arg, type_info)
           when :need_correct_class
             raise ArgumentTypeError,
-              "Expected #{meth_caller.class}##{meth}'s #{i}th argument to be #{type_info} but got #{arg.inspect} instead"
+              "Expected #{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument to be #{type_info} but got #{arg.inspect} instead"
           when :need_correct_method
             raise ArgumentTypeError,
-              "Expected #{meth_caller.class}##{meth}'s #{i}th argument to have method ##{type_info} but got #{arg.inspect} instead"
+              "Expected #{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument to have method ##{type_info} but got #{arg.inspect} instead"
           end
         end
       end

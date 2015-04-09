@@ -57,7 +57,7 @@ MyClass.new.sum(1, 2)
 #=> 3
 
 MyClass.new.sum(1, 'string')
-#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 2th argument to be Numeric but got "string" instead
+#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 2nd argument to be Numeric but got "string" instead
 
 MyClass.new.wrong_sum(1, 2)
 #=> Rubype::ReturnTypeError: Expected MyClass#wrong_sum to return Numeric but got "string" instead
@@ -75,7 +75,7 @@ MyClass.new.sum('1', 2)
 #=> 3
 
 MyClass.new.sum(:has_no_to_i, 2)
-#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1th argument to have method #to_i but got :has_no_to_i instead
+#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1st argument to have method #to_i but got :has_no_to_i instead
 
 
 # ex3: You can use Any class, if you want
@@ -90,7 +90,7 @@ People.new.marry(People.new)
 #=> no error
 
 People.new.marry('non people')
-#=> Rubype::ArgumentTypeError: Expected People#marry's 1th argument to be People but got "non people" instead
+#=> Rubype::ArgumentTypeError: Expected People#marry's 1st argument to be People but got "non people" instead
 
 ```
 
