@@ -95,18 +95,17 @@ class TestRubype < MiniTest::Unit::TestCase
       end
       typesig :test_mth, [Numeric, Numeric] => String
     RUBY_CODE
-    Object.const_set('MyClass', klass)
 
-    meth = klass.new.method(:test_mth)
-    assert_equal meth.type_info, { [Numeric, Numeric] => String }
-    assert_equal meth.arg_types, [Numeric, Numeric]
-    assert_equal meth.return_type, String
+    assert_correct_checks_on_class(klass)
+  end
 
-    err = assert_raises(Rubype::ReturnTypeError) { meth.(1,2) }
-    assert_equal err.message, %|Expected MyClass#test_mth to return String but got nil instead|
+  def test_type_info_syntactic_sugar
+    klass = Class.new.class_eval <<-RUBY_CODE
+      [Numeric, Numeric, String] > def test_mth(n1, n2)
+      end
+    RUBY_CODE
 
-    err = assert_raises(Rubype::ArgumentTypeError) { meth.(1,'2') }
-    assert_equal err.message, %|Expected MyClass#test_mth's 2nd argument to be Numeric but got "2" instead|
+    assert_correct_checks_on_class(klass)
   end
 
   private
@@ -124,6 +123,22 @@ class TestRubype < MiniTest::Unit::TestCase
 
     def assert_wrong_rtn(type_list, args, val)
       assert_raises(Rubype::ReturnTypeError) { define_test_method(type_list, args, val).call(*args) }
+    end
+
+    def assert_correct_checks_on_class(klass)
+      Object.send(:remove_const, 'MyClass') if defined? MyClass
+      Object.const_set('MyClass', klass)
+
+      meth = klass.new.method(:test_mth)
+      assert_equal meth.type_info, { [Numeric, Numeric] => String }
+      assert_equal meth.arg_types, [Numeric, Numeric]
+      assert_equal meth.return_type, String
+
+      err = assert_raises(Rubype::ReturnTypeError) { meth.(1,2) }
+      assert_equal err.message, %|Expected MyClass#test_mth to return String but got nil instead|
+
+      err = assert_raises(Rubype::ArgumentTypeError) { meth.(1,'2') }
+      assert_equal err.message, %|Expected MyClass#test_mth's 2nd argument to be Numeric but got "2" instead|
     end
 
     def define_test_method(type_list, args, val)

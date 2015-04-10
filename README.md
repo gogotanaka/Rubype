@@ -10,13 +10,20 @@ def sum(x, y)
 end
 typesig :sum, [Numeric, Numeric] => String
 
+# This type definition can also be written like this:
+
+require 'rubype/syntactic_sugar'
+[Numeric, Numeric, String] > def sum(x, y)
+  (x + y).to_s
+end
+
+
 # Assert first arg has method #to_i
 def sum(x, y)
   x.to_i + y
 end
 typesig :sum, [:to_i, Numeric] => Numeric
 ```
-
 
 This gem brings you advantage of type without changing existing code's behavior.
 
