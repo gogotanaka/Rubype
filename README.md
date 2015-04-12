@@ -4,17 +4,20 @@
 
 ![210414.png](https://qiita-image-store.s3.amazonaws.com/0/30440/0aafba03-1a4c-4676-5377-75f906aaeab9.png)
 ```rb
-# Assert class of both args is Numeric and class of return is String
-def sum(x, y)
-  (x + y).to_s
+require 'rubype'
+class MyClass
+  # Assert first arg has method #to_i, second arg and return value are instance of Numeric.
+  def sum(x, y)
+    x.to_i + y
+  end
+  typesig :sum, [:to_i, Numeric] => Numeric
 end
-typesig :sum, [Numeric, Numeric] => String
 
-# Assert first arg has method #to_i
-def sum(x, y)
-  x.to_i + y
-end
-typesig :sum, [:to_i, Numeric] => Numeric
+MyClass.new.sum(:has_no_to_i, 2)
+#=> Rubype::ArgumentTypeError: for MyClass#sum's 1st argument
+#   Expected: respond to :to_i,
+#   Actual:   :has_no_to_i
+#   ...(stack trace)
 ```
 
 
@@ -57,10 +60,16 @@ MyClass.new.sum(1, 2)
 #=> 3
 
 MyClass.new.sum(1, 'string')
-#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 2nd argument to be Numeric but got "string" instead
+#=> Rubype::ArgumentTypeError: for MyClass#sum's 2nd argument
+#   Expected: Numeric,
+#   Actual:   "string"
+#   ...(stack trace)
 
 MyClass.new.wrong_sum(1, 2)
-#=> Rubype::ReturnTypeError: Expected MyClass#wrong_sum to return Numeric but got "string" instead
+#=> Rubype::ReturnTypeError: for MyClass#wrong_sum's return
+#   Expected: Numeric,
+#   Actual:   "string"
+#   ...(stack trace)
 
 
 # ex2: Assert object has specified method
@@ -75,7 +84,10 @@ MyClass.new.sum('1', 2)
 #=> 3
 
 MyClass.new.sum(:has_no_to_i, 2)
-#=> Rubype::ArgumentTypeError: Expected MyClass#sum's 1st argument to have method #to_i but got :has_no_to_i instead
+#=> Rubype::ArgumentTypeError: for MyClass#sum's 1st argument
+#   Expected: respond to :to_i,
+#   Actual:   :has_no_to_i
+#   ...(stack trace)
 
 
 # ex3: You can use Any class, if you want
@@ -90,7 +102,10 @@ People.new.marry(People.new)
 #=> no error
 
 People.new.marry('non people')
-#=> Rubype::ArgumentTypeError: Expected People#marry's 1st argument to be People but got "non people" instead
+#=> Rubype::ArgumentTypeError: for People#marry's 1st argument
+#   Expected: People,
+#   Actual:   "non people"
+#   ...(stack trace)
 
 ```
 

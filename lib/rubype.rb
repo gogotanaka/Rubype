@@ -62,9 +62,9 @@ module Rubype
           arg_types => rtn_type
         }
         __rubype__.send(:define_method, meth) do |*args, &block|
-          ::Rubype.send(:assert_arg_type, self, meth, args, arg_types)
+          ::Rubype.send(:assert_arg_type, self, meth, args, arg_types, caller)
           rtn = super(*args, &block)
-          ::Rubype.send(:assert_trn_type, self, meth, rtn, rtn_type)
+          ::Rubype.send(:assert_trn_type, self, meth, rtn, rtn_type, caller)
           rtn
         end
       end
@@ -80,15 +80,12 @@ module Rubype
       # @param meth [Symbol]
       # @param args [Array<Object>]
       # @param type_infos [Array<Class, Symbol>]
-      def assert_arg_type(meth_caller, meth, args, type_infos)
+      # @params caller_trace [Array<String>]
+      def assert_arg_type(meth_caller, meth, args, type_infos, caller_trace)
         args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
-          case type_check(arg, type_info)
-          when :need_correct_class
+          unless type_check(arg, type_info)
             raise ArgumentTypeError,
-              "Expected #{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument to be #{type_info} but got #{arg.inspect} instead"
-          when :need_correct_method
-            raise ArgumentTypeError,
-              "Expected #{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument to have method ##{type_info} but got #{arg.inspect} instead"
+              error_mes("#{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument", type_info, arg, caller_trace)
           end
         end
       end
@@ -96,14 +93,11 @@ module Rubype
       # @param caller [Module]
       # @param rtn [Object]
       # @param type_info [Class, Symbol]
-      def assert_trn_type(meth_caller, meth, rtn, type_info)
-        case type_check(rtn, type_info)
-        when :need_correct_class
+      # @params caller_trace [Array<String>]
+      def assert_trn_type(meth_caller, meth, rtn, type_info, caller_trace)
+        unless type_check(rtn, type_info)
           raise ReturnTypeError,
-            "Expected #{meth_caller.class}##{meth} to return #{type_info} but got #{rtn.inspect} instead"
-        when :need_correct_method
-          raise ReturnTypeError,
-            "Expected #{meth_caller.class}##{meth} to return object which has method ##{type_info} but got #{rtn.inspect} instead"
+            error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
         end
       end
 
@@ -112,11 +106,24 @@ module Rubype
       # @return [Symbol]
       def type_check(obj, type_info)
         case type_info
-        when Module
-          :need_correct_class unless (obj.is_a?(type_info) || type_info == Any)
-        when Symbol
-          :need_correct_method unless (obj.respond_to?(type_info))
+        when Module; (obj.is_a?(type_info) || type_info == Any)
+        when Symbol; (obj.respond_to?(type_info))
         end
+      end
+
+      # @return [String]
+      def error_mes(target, expected, actual, caller_trace)
+        expected_mes = case expected
+        when Module; expected
+        when Symbol; "respond to :#{expected}"
+        end
+        <<-ERROR_MES
+for #{target}
+Expected: #{expected_mes},
+Actual:   #{actual.inspect}
+
+#{caller_trace.join("\n")}
+        ERROR_MES
       end
   end
 end
