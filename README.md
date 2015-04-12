@@ -169,8 +169,11 @@ MyClass.new.method(:sum).arg_types
 
 MyClass.new.method(:sum).return_type
 # => Numeric
-
 ```
+### Super clean!!!
+Contract is implemented with less than 80 lines source code!
+(It is not too little, works well enough)
+https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L2-L79
 
 ## Benchmarks
 
