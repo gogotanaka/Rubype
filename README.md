@@ -35,7 +35,7 @@ This gem brings you advantage of type without changing existing code's behavior.
 
 # Feature
 ### Super clean!!!
-I know is't terrible to run your important code with such a hacked gem.
+I know it's terrible to run your important code with such a hacked gem.
 But this contract is implemented by less than 80 lines source code!
 (It is not too little, works well enough)
 https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L2-L79
