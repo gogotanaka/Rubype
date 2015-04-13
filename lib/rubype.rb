@@ -84,9 +84,7 @@ FalseClass.send(:include, Boolean)
 
 class Method
   def type_info
-    if methods_hash = Rubype.typed_method_info[owner]
-      methods_hash[name]
-    end
+    Rubype.typed_method_info[owner][name]
   end
   typesig :type_info, [] => Hash
 
