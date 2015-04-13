@@ -6,13 +6,11 @@ class Module
       prepend (@__rubype__ = Module.new) unless @__rubype__
       @__rubype__
     end
-    # typesig :__rubype__, [] => Rubype
 
     def typesig(meth, type_info_hash)
       ::Rubype.define_typed_method(self, meth, type_info_hash, __rubype__)
       self
     end
-    # typesig :typesig, [Symbol, Hash] => Module
 end
 
 module Rubype
@@ -27,9 +25,7 @@ module Rubype
 
       __rubype__.send(:define_method, meth) do |*args, &block|
         ::Rubype.assert_arg_type(self, meth, args, arg_types, caller)
-        super(*args, &block).tap do |rtn|
-          ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller)
-        end
+        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller) }
       end
     end
 
@@ -54,8 +50,8 @@ module Rubype
     private
       def match_type?(obj, type_info)
         case type_info
-        when Module then (obj.is_a?(type_info) || type_info == Any)
-        when Symbol then (obj.respond_to?(type_info))
+        when Module then obj.is_a?(type_info)
+        when Symbol then obj.respond_to?(type_info)
         end
       end
 
@@ -74,13 +70,13 @@ Actual:   #{actual.inspect}
       end
   end
 end
-# === end (only 79 lines :D)=== #
+# === end (only 73 lines :D)=== #
 
 # Builtin Contracts
-class  Any;     end
 module Boolean; end
 TrueClass.send(:include, Boolean)
 FalseClass.send(:include, Boolean)
+Any = BasicObject
 
 class Method
   def type_info

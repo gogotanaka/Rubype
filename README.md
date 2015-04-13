@@ -246,10 +246,14 @@ This gem requires Ruby 2.0.0+.
 
 ### Contributing
 
+* I really wanna make Rubype elegant source code.
+
+* Any feature or comments are welcome.
+
+#### How to developt
 Fork it ( https://github.com/[my-github-username]/rubype/fork )
 
 Create your feature branch (`git checkout -b my-new-feature`)
-
     $ bundle install --path vendor/bundle
 
 Commit your changes (`git commit -am 'Add some feature'`)
@@ -257,10 +261,6 @@ Commit your changes (`git commit -am 'Add some feature'`)
     $ bundle exec rake test
 
     ......
-
-    Finished in 0.010961s, 547.3953 runs/s, 5017.7903 assertions/s.
-
-    7 runs, 61 assertions, 0 failures, 0 errors, 0 skips
 
 Push to the branch (`git push origin my-new-feature`)
 
