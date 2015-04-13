@@ -35,18 +35,16 @@ module Rubype
 
     def assert_arg_type(meth_caller, meth, args, type_infos, caller_trace)
       args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
-        unless match_type?(arg, type_info)
-          raise ArgumentTypeError,
-            error_mes("#{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument", type_info, arg, caller_trace)
-        end
+        next if match_type?(arg, type_info)
+        raise ArgumentTypeError,
+          error_mes("#{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument", type_info, arg, caller_trace)
       end
     end
 
     def assert_rtn_type(meth_caller, meth, rtn, type_info, caller_trace)
-      unless match_type?(rtn, type_info)
-        raise ReturnTypeError,
-          error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
-      end
+      return if match_type?(rtn, type_info)
+      raise ReturnTypeError,
+        error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
     end
 
     def typed_method_info
@@ -56,15 +54,15 @@ module Rubype
     private
       def match_type?(obj, type_info)
         case type_info
-        when Module; (obj.is_a?(type_info) || type_info == Any)
-        when Symbol; (obj.respond_to?(type_info))
+        when Module then (obj.is_a?(type_info) || type_info == Any)
+        when Symbol then (obj.respond_to?(type_info))
         end
       end
 
       def error_mes(target, expected, actual, caller_trace)
         expected_mes = case expected
-        when Module; expected
-        when Symbol; "respond to :#{expected}"
+                       when Module then expected
+                       when Symbol then "respond to :#{expected}"
         end
         <<-ERROR_MES
 for #{target}
@@ -86,9 +84,7 @@ FalseClass.send(:include, Boolean)
 
 class Method
   def type_info
-    if methods_hash = Rubype.typed_method_info[owner]
-      methods_hash[name]
-    end
+    Rubype.typed_method_info[owner][name]
   end
   typesig :type_info, [] => Hash
 
