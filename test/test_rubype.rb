@@ -4,7 +4,7 @@ class TypePair
     "#{last_arg_type} => #{rtn_type}"
   end
 end
-class TestRubype < MiniTest::Unit::TestCase
+class TestRubype < Minitest::Test
   def setup
     @string  = 'str'
     @numeric = 1
