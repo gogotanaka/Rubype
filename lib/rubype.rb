@@ -54,15 +54,15 @@ module Rubype
     private
       def match_type?(obj, type_info)
         case type_info
-        when Module; (obj.is_a?(type_info) || type_info == Any)
-        when Symbol; (obj.respond_to?(type_info))
+        when Module then (obj.is_a?(type_info) || type_info == Any)
+        when Symbol then (obj.respond_to?(type_info))
         end
       end
 
       def error_mes(target, expected, actual, caller_trace)
         expected_mes = case expected
-        when Module; expected
-        when Symbol; "respond to :#{expected}"
+                       when Module then expected
+                       when Symbol then "respond to :#{expected}"
         end
         <<-ERROR_MES
 for #{target}
