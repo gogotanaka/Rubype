@@ -34,6 +34,13 @@ This gem brings you advantage of type without changing existing code's behavior.
 * There is no static analysis.
 
 # Feature
+### Super clean!!!
+I know is't terrible to run your important code with such a hacked gem.
+But this contract is implemented by less than 80 lines source code!
+(It is not too little, works well enough)
+https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L2-L79
+
+You can read this over easily and even you can implement by yourself !(Don't need to use this gem, just take idea)
 
 ### Advantage of type
 * Meaningful error
@@ -170,10 +177,6 @@ MyClass.new.method(:sum).arg_types
 MyClass.new.method(:sum).return_type
 # => Numeric
 ```
-### Super clean!!!
-Contract is implemented with less than 80 lines source code!
-(It is not too little, works well enough)
-https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L2-L79
 
 ## Benchmarks
 
