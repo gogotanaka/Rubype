@@ -11,8 +11,9 @@ module Rubype
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
 
       __rubype__.send(:define_method, meth) do |*args, &block|
-        ::Rubype.assert_arg_type(self, meth, args, arg_types, caller)
-        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller) }
+        caller_trace = caller
+        ::Rubype.assert_arg_type(self, meth, args, arg_types, caller_trace)
+        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
       end
     end
 
