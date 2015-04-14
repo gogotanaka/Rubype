@@ -1,8 +1,13 @@
 language: ruby
+sudo: false
+cache:
+- bundler
+
+bundler:
 rvm:
-  - 2.2.0
-  - 2.1.5
-  - 2.0.0
+  - 2.2
+  - 2.1
+  - 2.0
   - rbx-2
   - ruby-head
   # - jruby-head
