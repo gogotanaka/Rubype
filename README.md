@@ -268,3 +268,7 @@ Create a new Pull Request to `develop` branch
 
 ## Credits
 [@chancancode](https://github.com/chancancode) and [This article](http://blog.codeclimate.com/blog/2014/05/06/gradual-type-checking-for-ruby/) first brought this to my attention. I've stolen some idea from them.
+
+## License
+
+MIT license (© 2015 Kazuki Tanaka)
