@@ -10,10 +10,23 @@ module Rubype
 
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
 
+      method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
         caller_trace = caller
         ::Rubype.assert_arg_type(self, meth, args, arg_types, caller_trace)
         super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
+      end
+      __rubype__.send(method_visibility, meth)
+    end
+
+    def get_method_visibility(owner, meth)
+      case
+      when owner.private_method_defined?(meth)
+        :private
+      when owner.protected_method_defined?(meth)
+        :protected
+      else
+        :public
       end
     end
 
@@ -44,10 +57,12 @@ module Rubype
       end
 
       def error_mes(target, expected, actual, caller_trace)
-        expected_mes = case expected
-                       when Module then expected
-                       when Symbol then "respond to :#{expected}"
+        expected_mes =
+          case expected
+          when Module then expected
+          when Symbol then "respond to :#{expected}"
         end
+
         <<-ERROR_MES
 for #{target}
 Expected: #{expected_mes},
@@ -63,13 +78,13 @@ Actual:   #{actual.inspect}
           "th"
         else
           case number % 10
-            when 1; "st"
-            when 2; "nd"
-            when 3; "rd"
-            else    "th"
-          end
+          when 1; "st"
+          when 2; "nd"
+          when 3; "rd"
+          else    "th"
         end
       end
+    end
   end
 end
 
