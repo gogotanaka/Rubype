@@ -104,6 +104,24 @@ class TestRubype < Minitest::Test
     #assert_equal err.message, %|Expected MyClass#test_mth's 2nd argument to be Numeric but got "2" instead|
   end
 
+  def test_respects_method_visibility
+    klass = Class.new.class_eval <<-RUBY_CODE
+      private
+      def private_mth(n1, n2)
+      end
+      typesig :private_mth, [Numeric, Numeric] => NilClass
+
+      protected
+      def protected_mth(n1, n2)
+      end
+      typesig :protected_mth, [Numeric, Numeric] => NilClass
+    RUBY_CODE
+    instance = klass.new
+
+    # assert_raises(NoMethodError){ instance.private_mth(1,2) }
+    assert_raises(NoMethodError){ instance.protected_mth(1,2) }
+  end
+
   private
     def assert_equal_to_s(str, val)
       assert_equal str, val.to_s

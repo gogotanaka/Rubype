@@ -11,10 +11,23 @@ module Rubype
 
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
 
+      method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
         caller_trace = caller
         ::Rubype.assert_arg_type(self, meth, args, arg_types, caller_trace)
         super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
+      end
+      __rubype__.send(method_visibility, meth)
+    end
+
+    def get_method_visibility(owner, meth)
+      case
+      when owner.private_method_defined?(meth)
+        :private
+      when owner.protected_method_defined?(meth)
+        :protected
+      else
+        :public
       end
     end
 
@@ -62,7 +75,8 @@ Actual:   #{actual.inspect}
 #{caller_trace.join("\n")}
         ERROR_MES
       end
- end
+    end
+
 end
 
 require_relative 'rubype/core_ext'
