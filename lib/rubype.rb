@@ -43,14 +43,17 @@ module Rubype
         end
       end
 
-      def error_mes(target, expected, actual, caller_trace)
-        expected_mes = case expected
-                       when Module then expected
-                       when Symbol then "respond to :#{expected}"
+      def expected_mes(expected)
+        case expected
+        when Module then expected
+        when Symbol then "respond to :#{expected}"
         end
+      end
+
+      def error_mes(target, expected, actual, caller_trace)
         <<-ERROR_MES
 for #{target}
-Expected: #{expected_mes},
+Expected: #{expected_mes(expected)},
 Actual:   #{actual.inspect}
 
 #{caller_trace.join("\n")}
