@@ -19,10 +19,12 @@ module Rubype
     end
 
     def assert_arg_type(meth_caller, meth, args, type_infos, caller_trace)
-      args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
+      args.size.times do |i|
+        arg = args[i]
+        type_info = type_infos[i]
         next if match_type?(arg, type_info)
         raise ArgumentTypeError,
-          error_mes("#{meth_caller.class}##{meth}'s #{ordinalize(i)} argument", type_info, arg, caller_trace)
+          error_mes("#{meth_caller.class}##{meth}'s #{ordinalize(i + 1)} argument", type_info, arg, caller_trace)
       end
     end
 
