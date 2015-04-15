@@ -1,4 +1,5 @@
 require_relative 'rubype/version'
+require_relative 'rubype/ordinalize'
 
 module Rubype
   @@typed_method_info = Hash.new({})
@@ -21,7 +22,7 @@ module Rubype
       args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
         next if match_type?(arg, type_info)
         raise ArgumentTypeError,
-          error_mes("#{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument", type_info, arg, caller_trace)
+          error_mes("#{meth_caller.class}##{meth}'s #{ordinalize(i)} argument", type_info, arg, caller_trace)
       end
     end
 
@@ -36,6 +37,7 @@ module Rubype
     end
 
     private
+
       def match_type?(obj, type_info)
         case type_info
         when Module then obj.is_a?(type_info)
@@ -59,21 +61,7 @@ Actual:   #{actual.inspect}
 #{caller_trace.join("\n")}
         ERROR_MES
       end
-
-      # Borrowed from ActiveSupport::Inflector
-      def ordinal(number)
-        if (11..13).include?(number % 100)
-          "th"
-        else
-          case number % 10
-            when 1; "st"
-            when 2; "nd"
-            when 3; "rd"
-            else    "th"
-          end
-        end
-      end
-  end
+ end
 end
 
 require_relative 'rubype/core_ext'
