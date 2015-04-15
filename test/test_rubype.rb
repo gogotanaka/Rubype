@@ -1,9 +1,4 @@
 require 'minitest_helper'
-class TypePair
-  def to_s
-    "#{last_arg_type} => #{rtn_type}"
-  end
-end
 class TestRubype < Minitest::Test
   def setup
     @string  = 'str'
