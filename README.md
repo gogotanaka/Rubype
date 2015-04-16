@@ -251,20 +251,28 @@ This gem requires Ruby 2.0.0+.
 * Any feature or comments are welcome.
 
 #### How to developt
-Fork it ( https://github.com/[my-github-username]/rubype/fork )
+1. Fork it ( https://github.com/[my-github-username]/rubype/fork )
 
-Create your feature branch (`git checkout -b my-new-feature`)
+2. Create your feature branch (`git checkout -b my-new-feature`)
     $ bundle install --path vendor/bundle
 
-Commit your changes (`git commit -am 'Add some feature'`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+
+4. Run tests
 
     $ bundle exec rake test
 
     ......
 
-Push to the branch (`git push origin my-new-feature`)
+5. Run benchmerk(optional)
 
-Create a new Pull Request to `develop` branch
+    $ bundle exec rake bm
+
+    ......
+
+6. Push to the branch (`git push origin my-new-feature`)
+
+7. Create a new Pull Request to `develop` branch
 
 ## Credits
 [@chancancode](https://github.com/chancancode) and [This article](http://blog.codeclimate.com/blog/2014/05/06/gradual-type-checking-for-ruby/) first brought this to my attention. I've stolen some idea from them.
