@@ -250,10 +250,17 @@ This gem requires Ruby 2.0.0+.
 
 * Any feature or comments are welcome.
 
-#### How to developt
+#### How to develop
+
+Now Rubype is written with 100% Ruby.
+In terms of performance, only core module(https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L4-L80) will be translate to C.
+
+Only two API will be translate to C, it means you don't need to know what C dose!
+
 1. Fork it ( https://github.com/[my-github-username]/rubype/fork )
 
 2. Create your feature branch (`git checkout -b my-new-feature`)
+
     $ bundle install --path vendor/bundle
 
 3. Commit your changes (`git commit -am 'Add some feature'`)
