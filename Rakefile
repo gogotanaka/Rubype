@@ -1,10 +1,19 @@
 require "bundler/gem_tasks"
 require "rake/testtask"
+require "rake/extensiontask"
 
+#  Test
+#-----------------------------------------------
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
 end
 task default: :test
+
+#  Compile C extension
+#-----------------------------------------------
+Rake::ExtensionTask.new("rubype") do |ext|
+  ext.lib_dir = "lib/rubype"
+end
 
 #  Benchmark
 #-----------------------------------------------
