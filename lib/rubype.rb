@@ -1,5 +1,6 @@
 require_relative 'rubype/version'
 require_relative 'rubype/ordinalize'
+require 'rubype/rubype'
 
 module Rubype
   @@typed_method_info = Hash.new({})
@@ -51,13 +52,6 @@ module Rubype
     end
 
     private
-
-      def match_type?(obj, type_info)
-        case type_info
-        when Module then obj.is_a?(type_info)
-        when Symbol then obj.respond_to?(type_info)
-        end
-      end
 
       def expected_mes(expected)
         case expected

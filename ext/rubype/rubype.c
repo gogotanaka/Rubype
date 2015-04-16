@@ -28,7 +28,7 @@ Init_rubype(void)
 {
   id_is_a_p = rb_intern_const("is_a?");
   rb_mRubype  = rb_define_module("Rubype");
-  rb_define_method(rb_mRubype, "match_type?", rb_rubype_match_type_p, 2);
+  rb_define_singleton_method(rb_mRubype, "match_type?", rb_rubype_match_type_p, 2);
   // rb_cAny     = rb_define_class("Any", rb_cObject);
   // rb_mBoolean = rb_define_module("Boolean");
   // rb_include_module(rb_cTrueClass, rb_mBoolean);
