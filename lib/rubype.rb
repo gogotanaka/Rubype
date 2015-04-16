@@ -13,7 +13,7 @@ module Rubype
 
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
-        caller_trace = caller
+        caller_trace = caller_locations(1, 5)
         ::Rubype.assert_arg_type(self, meth, args, arg_types, caller_trace)
         super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
       end
