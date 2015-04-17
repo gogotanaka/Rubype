@@ -5,8 +5,14 @@ module Rubype
   @@typed_method_info = Hash.new({})
   class ArgumentTypeError < ::TypeError; end
   class ReturnTypeError   < ::TypeError; end
+  class InvalidTypesigError   < ::TypeError; end
+  module TypeInfo; end
+  Module.send(:include, TypeInfo)
+  Symbol.send(:include, TypeInfo)
+
   class << self
     def define_typed_method(owner, meth, type_info_hash, __rubype__)
+      raise InvalidTypesigError unless valid_type_info_hash?(type_info_hash)
       arg_types, rtn_type = *type_info_hash.first
 
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
@@ -51,6 +57,11 @@ module Rubype
     end
 
     private
+
+      def valid_type_info_hash?(type_info_hash)
+        return false unless type_info_hash.is_a?(Hash)
+        type_info_hash.first[0].is_a?(Array)
+      end
 
       def match_type?(obj, type_info)
         case type_info
