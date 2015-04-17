@@ -122,6 +122,16 @@ class TestRubype < Minitest::Test
     assert_raises(NoMethodError){ instance.protected_mth(1,2) }
   end
 
+  def test_invalid_typesig
+    assert_raises(Rubype::InvalidTypesigError) do
+       Class.new.class_eval <<-RUBY_CODE
+        def mth(n1, n2)
+        end
+        typesig :private_mth, Numeric => NilClass
+      RUBY_CODE
+    end
+  end
+
   private
     def assert_equal_to_s(str, val)
       assert_equal str, val.to_s
