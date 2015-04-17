@@ -1,6 +1,6 @@
 #include "rubype.h"
 
-VALUE rb_mRubype, rb_cAny, rb_mBoolean;
+VALUE rb_mRubype, rb_cAny, rb_mBoolean, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError;
 
 #define STR2SYM(x) ID2SYM(rb_intern(x))
 static ID id_is_a_p, id_to_s;
@@ -60,17 +60,17 @@ rb_rubype_expected_mes(VALUE rubype, VALUE expected)
   return rb_str_new2("");
 }
 
-// static VALUE
-// rb_rubype_assert_rtn_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE rtn, VALUE type_info, VALUE caller_trace)
-// {
-//   if (match_type_p(rtn, type_info)){
-//     return Qtrue;
-//   }
-//   else {
-//     rb_raise(rb_eTypeError, "not valid value");
-//     return Qfalse;
-//   }
-// }
+static VALUE
+rb_rubype_assert_rtn_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE rtn, VALUE type_info, VALUE caller_trace)
+{
+  if (match_type_p(rtn, type_info)){
+    return Qtrue;
+  }
+  else {
+    rb_raise(rb_eRubypeReturnTypeError, "not valid value");
+    return Qfalse;
+  }
+}
 
 void
 Init_rubype(void)
@@ -78,13 +78,9 @@ Init_rubype(void)
   id_is_a_p = rb_intern_const("is_a?");
   id_to_s = rb_intern_const("to_s");
   rb_mRubype  = rb_define_module("Rubype");
-  rb_eMathDomainError = rb_define_class_under(rb_mRubype, "ArgumentTypeError", rb_eTypeError);
-  rb_eMathDomainError = rb_define_class_under(rb_mRubype, "ReturnTypeError", rb_eTypeError);
-  // rb_define_singleton_method(rb_mRubype, "assert_rtn_type", rb_rubype_assert_rtn_type, 5);
+  rb_eRubypeArgumentTypeError = rb_define_class_under(rb_mRubype, "ArgumentTypeError", rb_eTypeError);
+  rb_eRubypeReturnTypeError = rb_define_class_under(rb_mRubype, "ReturnTypeError", rb_eTypeError);
+  rb_define_singleton_method(rb_mRubype, "assert_rtn_type", rb_rubype_assert_rtn_type, 5);
   rb_define_singleton_method(rb_mRubype, "match_type?", rb_rubype_match_type_p, 2);
   rb_define_singleton_method(rb_mRubype, "expected_mes", rb_rubype_expected_mes, 1);
-  // rb_cAny     = rb_define_class("Any", rb_cObject);
-  // rb_mBoolean = rb_define_module("Boolean");
-  // rb_include_module(rb_cTrueClass, rb_mBoolean);
-  // rb_include_module(rb_cFalseClass, rb_mBoolean);
 }

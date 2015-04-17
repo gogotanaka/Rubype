@@ -39,12 +39,6 @@ module Rubype
       end
     end
 
-    def assert_rtn_type(meth_caller, meth, rtn, type_info, caller_trace)
-      return if match_type?(rtn, type_info)
-      raise ReturnTypeError,
-        error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
-    end
-
     def typed_method_info
       @@typed_method_info
     end
