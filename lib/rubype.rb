@@ -4,8 +4,6 @@ require 'rubype/rubype'
 
 module Rubype
   @@typed_method_info = Hash.new({})
-  class ArgumentTypeError < ::TypeError; end
-  class ReturnTypeError   < ::TypeError; end
   class << self
     def define_typed_method(owner, meth, type_info_hash, __rubype__)
       arg_types, rtn_type = *type_info_hash.first
@@ -52,14 +50,6 @@ module Rubype
     end
 
     private
-
-      def expected_mes(expected)
-        case expected
-        when Module then expected
-        when Symbol then "respond to :#{expected}"
-        end
-      end
-
       def error_mes(target, expected, actual, caller_trace)
         <<-ERROR_MES
 for #{target}
