@@ -1,52 +1,55 @@
-require 'rubype/ordinal'
-# === Rubype core === #
-class Module
-  private
-    def __rubype__
-      prepend (@__rubype__ = Module.new) unless @__rubype__
-      @__rubype__
-    end
-    # typesig :__rubype__, [] => Rubype
-
-    def typesig(meth, type_info_hash)
-      ::Rubype.define_typed_method(self, meth, type_info_hash, __rubype__)
-      self
-    end
-    # typesig :typesig, [Symbol, Hash] => Module
-end
+require_relative 'rubype/version'
+require_relative 'rubype/ordinalize'
 
 module Rubype
   @@typed_method_info = Hash.new({})
   class ArgumentTypeError < ::TypeError; end
   class ReturnTypeError   < ::TypeError; end
+  class InvalidTypesigError   < ::TypeError; end
+  module TypeInfo; end
+  Module.send(:include, TypeInfo)
+  Symbol.send(:include, TypeInfo)
+
   class << self
     def define_typed_method(owner, meth, type_info_hash, __rubype__)
+      raise InvalidTypesigError unless valid_type_info_hash?(type_info_hash)
       arg_types, rtn_type = *type_info_hash.first
 
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
 
+      method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
-        ::Rubype.assert_arg_type(self, meth, args, arg_types, caller)
-        super(*args, &block).tap do |rtn|
-          ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller)
-        end
+        caller_trace = caller_locations(1, 5)
+        ::Rubype.assert_arg_type(self, meth, args, arg_types, caller_trace)
+        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
+      end
+      __rubype__.send(method_visibility, meth)
+    end
+
+    def get_method_visibility(owner, meth)
+      case
+      when owner.private_method_defined?(meth)
+        :private
+      when owner.protected_method_defined?(meth)
+        :protected
+      else
+        :public
       end
     end
 
     def assert_arg_type(meth_caller, meth, args, type_infos, caller_trace)
-      args.zip(type_infos).each.with_index(1) do |(arg, type_info), i|
-        unless match_type?(arg, type_info)
-          raise ArgumentTypeError,
-            error_mes("#{meth_caller.class}##{meth}'s #{i}#{ordinal(i)} argument", type_info, arg, caller_trace)
-        end
+      args.each_with_index do |arg, i|
+        type_info = type_infos[i]
+        next if match_type?(arg, type_info)
+        raise ArgumentTypeError,
+          error_mes("#{meth_caller.class}##{meth}'s #{ordinalize(i + 1)} argument", type_info, arg, caller_trace)
       end
     end
 
     def assert_rtn_type(meth_caller, meth, rtn, type_info, caller_trace)
-      unless match_type?(rtn, type_info)
-        raise ReturnTypeError,
-          error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
-      end
+      return if match_type?(rtn, type_info)
+      raise ReturnTypeError,
+        error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
     end
 
     def typed_method_info
@@ -54,51 +57,37 @@ module Rubype
     end
 
     private
+
+      def valid_type_info_hash?(type_info_hash)
+        return false unless type_info_hash.is_a?(Hash)
+        type_info_hash.first[0].is_a?(Array)
+      end
+
       def match_type?(obj, type_info)
         case type_info
-        when Module; (obj.is_a?(type_info) || type_info == Any)
-        when Symbol; (obj.respond_to?(type_info))
+        when Module then obj.is_a?(type_info)
+        when Symbol then obj.respond_to?(type_info)
+        end
+      end
+
+      def expected_mes(expected)
+        case expected
+        when Module then expected
+        when Symbol then "respond to :#{expected}"
         end
       end
 
       def error_mes(target, expected, actual, caller_trace)
-        expected_mes = case expected
-        when Module; expected
-        when Symbol; "respond to :#{expected}"
-        end
         <<-ERROR_MES
 for #{target}
-Expected: #{expected_mes},
+Expected: #{expected_mes(expected)},
 Actual:   #{actual.inspect}
 
 #{caller_trace.join("\n")}
         ERROR_MES
       end
-  end
-end
-# === end (only 79 lines :D)=== #
-
-# Builtin Contracts
-class  Any;     end
-module Boolean; end
-TrueClass.send(:include, Boolean)
-FalseClass.send(:include, Boolean)
-
-class Method
-  def type_info
-    if methods_hash = Rubype.typed_method_info[owner]
-      methods_hash[name]
     end
-  end
-  typesig :type_info, [] => Hash
 
-  def arg_types
-    type_info.first.first if type_info
-  end
-  typesig :arg_types, [] => Array
-
-  def return_type
-    type_info.first.last if type_info
-  end
-  typesig :arg_types, [] => Any
 end
+
+require_relative 'rubype/core_ext'

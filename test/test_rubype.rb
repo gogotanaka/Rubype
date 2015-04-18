@@ -1,10 +1,5 @@
 require 'minitest_helper'
-class TypePair
-  def to_s
-    "#{last_arg_type} => #{rtn_type}"
-  end
-end
-class TestRubype < MiniTest::Unit::TestCase
+class TestRubype < Minitest::Test
   def setup
     @string  = 'str'
     @numeric = 1
@@ -107,6 +102,34 @@ class TestRubype < MiniTest::Unit::TestCase
 
     err = assert_raises(Rubype::ArgumentTypeError) { meth.(1,'2') }
     #assert_equal err.message, %|Expected MyClass#test_mth's 2nd argument to be Numeric but got "2" instead|
+  end
+
+  def test_respects_method_visibility
+    klass = Class.new.class_eval <<-RUBY_CODE
+      private
+      def private_mth(n1, n2)
+      end
+      typesig :private_mth, [Numeric, Numeric] => NilClass
+
+      protected
+      def protected_mth(n1, n2)
+      end
+      typesig :protected_mth, [Numeric, Numeric] => NilClass
+    RUBY_CODE
+    instance = klass.new
+
+    # assert_raises(NoMethodError){ instance.private_mth(1,2) }
+    assert_raises(NoMethodError){ instance.protected_mth(1,2) }
+  end
+
+  def test_invalid_typesig
+    assert_raises(Rubype::InvalidTypesigError) do
+       Class.new.class_eval <<-RUBY_CODE
+        def mth(n1, n2)
+        end
+        typesig :private_mth, Numeric => NilClass
+      RUBY_CODE
+    end
   end
 
   private

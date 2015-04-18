@@ -246,25 +246,44 @@ This gem requires Ruby 2.0.0+.
 
 ### Contributing
 
-Fork it ( https://github.com/[my-github-username]/rubype/fork )
+* I really wanna make Rubype elegant source code.
 
-Create your feature branch (`git checkout -b my-new-feature`)
+* Any feature or comments are welcome.
+
+#### How to develop
+
+Now Rubype is written with 100% Ruby.
+In terms of performance, only core module(https://github.com/gogotanaka/Rubype/blob/develop/lib/rubype.rb#L4-L80) will be translate to C.
+
+Only two API will be translate to C, it means you don't need to know what C dose!
+
+1. Fork it ( https://github.com/[my-github-username]/rubype/fork )
+
+2. Create your feature branch (`git checkout -b my-new-feature`)
 
     $ bundle install --path vendor/bundle
 
-Commit your changes (`git commit -am 'Add some feature'`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+
+4. Run tests
 
     $ bundle exec rake test
 
     ......
 
-    Finished in 0.010961s, 547.3953 runs/s, 5017.7903 assertions/s.
+5. Run benchmerk(optional)
 
-    7 runs, 61 assertions, 0 failures, 0 errors, 0 skips
+    $ bundle exec rake bm
 
-Push to the branch (`git push origin my-new-feature`)
+    ......
 
-Create a new Pull Request to `develop` branch
+6. Push to the branch (`git push origin my-new-feature`)
+
+7. Create a new Pull Request to `develop` branch
 
 ## Credits
 [@chancancode](https://github.com/chancancode) and [This article](http://blog.codeclimate.com/blog/2014/05/06/gradual-type-checking-for-ruby/) first brought this to my attention. I've stolen some idea from them.
+
+## License
+
+MIT license (© 2015 Kazuki Tanaka)
