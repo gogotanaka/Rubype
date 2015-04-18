@@ -17,8 +17,8 @@ module Rubype
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
         caller_trace = caller_locations(1, 5)
-        ::Rubype.assert_args_type(self, meth, args, arg_types, caller_trace)
-        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self, meth, rtn, rtn_type, caller_trace) }
+        ::Rubype.assert_args_type(self.class, meth, args, arg_types, caller_trace)
+        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self.class, meth, rtn, rtn_type, caller_trace) }
       end
       __rubype__.send(method_visibility, meth)
     end
@@ -39,13 +39,11 @@ module Rubype
     end
 
     private
-
       def valid_type_info_hash?(type_info_hash)
         return false unless type_info_hash.is_a?(Hash)
         type_info_hash.first[0].is_a?(Array)
       end
-    end
-
+  end
 end
 
 require_relative 'rubype/core_ext'

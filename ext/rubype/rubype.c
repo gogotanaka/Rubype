@@ -32,8 +32,9 @@ expected_mes(VALUE expected)
 
   switch (TYPE(expected)) {
     case T_SYMBOL:
-      str = rb_id2str(SYM2ID(expected));
-      return "can't convert %"PRIsVALUE" into Integer", str;
+      str = rb_str_new2("respond to #");
+      rb_str_catf(str, "%"PRIsVALUE, expected);
+      return str;
       break;
     case T_MODULE:
       return rb_funcall(expected, id_to_s, 0);
@@ -45,35 +46,44 @@ expected_mes(VALUE expected)
   return rb_str_new2("");
 }
 
-VALUE make_error_mes(VALUE target, VALUE expected, VALUE actual, VALUE caller_trace) {
-  return expected_mes(expected);
-}
 
+static VALUE
+test(VALUE rubype, VALUE obj)
+{
+  VALUE str;
+  str = rb_str_new2("");
+  rb_str_catf(str, "%"PRIsVALUE"#%"PRIsVALUE, obj, obj);
+  return str;
+}
 static VALUE
 rb_rubype_assert_args_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE args, VALUE type_infos, VALUE caller_trace)
 {
   int i;
   VALUE arg, type_info, error_mes;
+  VALUE target;
+
   for (i=0; i<RARRAY_LEN(args); i++) {
     arg       = rb_ary_entry(args, i);
     type_info = rb_ary_entry(type_infos, i);
 
     if (unmatch_type_p(arg, type_info)){
-      error_mes = make_error_mes(meth, type_info, arg, caller_trace);
-      //rb_funcall(meth_caller, id_plus, 1, rb_funcall(rb_str_new2("#"), id_plus, 1, meth));
-      rb_raise(rb_eRubypeArgumentTypeError, "can't convert %"PRIsVALUE" into Integer", rb_str_new2(""));
+      target = rb_str_new2("");
+      rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s %d argument", meth_caller, meth, i+1);
 
-      // error_mes("#{meth_caller.class}##{meth}'s #{ordinalize(i + 1)} argument", type_info, arg, caller_trace)
+      rb_raise(rb_eRubypeArgumentTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"", target, expected_mes(type_info), arg);
     }
   }
   return Qtrue;
 }
+
 static VALUE
 rb_rubype_assert_rtn_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE rtn, VALUE type_info, VALUE caller_trace)
 {
+  VALUE target;
   if (unmatch_type_p(rtn, type_info)){
-    rb_raise(rb_eRubypeReturnTypeError, "not valid value");
-    // error_mes("#{meth_caller.class}##{meth}'s return", type_info, rtn, caller_trace)
+    target = rb_str_new2("");
+    rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s return", meth_caller, meth);
+    rb_raise(rb_eRubypeReturnTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE, target, expected_mes(type_info), rtn);
   }
   return Qtrue;
 }
@@ -90,4 +100,5 @@ Init_rubype(void)
   rb_eInvalidTypesigError = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
   rb_define_singleton_method(rb_mRubype, "assert_args_type", rb_rubype_assert_args_type, 5);
   rb_define_singleton_method(rb_mRubype, "assert_rtn_type", rb_rubype_assert_rtn_type, 5);
+  rb_define_singleton_method(rb_mRubype, "test", test, 1);
 }
