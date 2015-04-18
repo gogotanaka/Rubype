@@ -14,12 +14,15 @@ module Rubype
 
       @@typed_method_info[owner][meth] = { arg_types => rtn_type }
 
+      puts ::Rubype.c_define_method(owner, meth, type_info_hash, __rubype__)
+
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
-        caller_trace = caller_locations(1, 5)
-        ::Rubype.assert_args_type(self.class, meth, args, arg_types, caller_trace)
-        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(self.class, meth, rtn, rtn_type, caller_trace) }
+        caller_trace = caller_locations(1, 5).join("\n")
+        ::Rubype.assert_args_type(owner, meth, args, arg_types, caller_trace)
+        super(*args, &block).tap { |rtn| ::Rubype.assert_rtn_type(owner, meth, rtn, rtn_type, caller_trace) }
       end
+
       __rubype__.send(method_visibility, meth)
     end
 

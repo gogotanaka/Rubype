@@ -5,7 +5,7 @@ VALUE rb_mRubype, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError, rb_eIn
 #define STR2SYM(x) ID2SYM(rb_intern(x))
 static ID id_is_a_p, id_to_s, id_plus;
 #define f_boolcast(x) ((x) ? Qtrue : Qfalse)
-
+#define error_fmt "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"\n\n%"PRIsVALUE""
 int unmatch_type_p(VALUE obj, VALUE type_info)
 {
   int check;
@@ -60,7 +60,7 @@ rb_rubype_assert_args_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE ar
     if (unmatch_type_p(arg, type_info)){
       target = rb_str_new2("");
       rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s %d argument", meth_caller, meth, i+1);
-      rb_raise(rb_eRubypeArgumentTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"\n\n", target, expected_mes(type_info), rb_ary_join(caller_trace, rb_str_new2("\n")));
+      rb_raise(rb_eRubypeArgumentTypeError, error_fmt, target, expected_mes(type_info), arg, caller_trace);
     }
   }
   return Qtrue;
@@ -73,10 +73,17 @@ rb_rubype_assert_rtn_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE rtn
   if (unmatch_type_p(rtn, type_info)){
     target = rb_str_new2("");
     rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s return", meth_caller, meth);
-    rb_raise(rb_eRubypeReturnTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE, target, expected_mes(type_info), rtn);
+    rb_raise(rb_eRubypeReturnTypeError, error_fmt, target, expected_mes(type_info), rtn, caller_trace);
   }
   return Qtrue;
 }
+
+static VALUE
+rb_rubype_c_define_method(VALUE rubype, VALUE owner, VALUE meth, VALUE type_info_hash, VALUE proxy_mod)
+{
+  return RCLASS_SUPER(proxy_mod);
+}
+
 
 void
 Init_rubype(void)
@@ -91,4 +98,6 @@ Init_rubype(void)
   rb_eInvalidTypesigError     = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
   rb_define_singleton_method(rb_mRubype, "assert_args_type", rb_rubype_assert_args_type, 5);
   rb_define_singleton_method(rb_mRubype, "assert_rtn_type",  rb_rubype_assert_rtn_type,  5);
+  rb_define_singleton_method(rb_mRubype, "c_define_method",  rb_rubype_c_define_method,  4);
+
 }
