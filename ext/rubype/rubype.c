@@ -46,20 +46,11 @@ expected_mes(VALUE expected)
   return rb_str_new2("");
 }
 
-
-static VALUE
-test(VALUE rubype, VALUE obj)
-{
-  VALUE str;
-  str = rb_str_new2("");
-  rb_str_catf(str, "%"PRIsVALUE"#%"PRIsVALUE, obj, obj);
-  return str;
-}
 static VALUE
 rb_rubype_assert_args_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE args, VALUE type_infos, VALUE caller_trace)
 {
   int i;
-  VALUE arg, type_info, error_mes;
+  VALUE arg, type_info;
   VALUE target;
 
   for (i=0; i<RARRAY_LEN(args); i++) {
@@ -69,8 +60,7 @@ rb_rubype_assert_args_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE ar
     if (unmatch_type_p(arg, type_info)){
       target = rb_str_new2("");
       rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s %d argument", meth_caller, meth, i+1);
-
-      rb_raise(rb_eRubypeArgumentTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"", target, expected_mes(type_info), arg);
+      rb_raise(rb_eRubypeArgumentTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"\n\n", target, expected_mes(type_info), rb_ary_join(caller_trace, rb_str_new2("\n")));
     }
   }
   return Qtrue;
@@ -92,13 +82,13 @@ void
 Init_rubype(void)
 {
   id_is_a_p = rb_intern_const("is_a?");
-  id_to_s = rb_intern_const("to_s");
-  id_plus = rb_intern_const("+");
+  id_to_s   = rb_intern_const("to_s");
+  id_plus   = rb_intern_const("+");
+
   rb_mRubype  = rb_define_module("Rubype");
-  rb_eRubypeArgumentTypeError = rb_define_class_under(rb_mRubype, "ArgumentTypeError", rb_eTypeError);
-  rb_eRubypeReturnTypeError = rb_define_class_under(rb_mRubype, "ReturnTypeError", rb_eTypeError);
-  rb_eInvalidTypesigError = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
+  rb_eRubypeArgumentTypeError = rb_define_class_under(rb_mRubype, "ArgumentTypeError",   rb_eTypeError);
+  rb_eRubypeReturnTypeError   = rb_define_class_under(rb_mRubype, "ReturnTypeError",     rb_eTypeError);
+  rb_eInvalidTypesigError     = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
   rb_define_singleton_method(rb_mRubype, "assert_args_type", rb_rubype_assert_args_type, 5);
-  rb_define_singleton_method(rb_mRubype, "assert_rtn_type", rb_rubype_assert_rtn_type, 5);
-  rb_define_singleton_method(rb_mRubype, "test", test, 1);
+  rb_define_singleton_method(rb_mRubype, "assert_rtn_type",  rb_rubype_assert_rtn_type,  5);
 }
