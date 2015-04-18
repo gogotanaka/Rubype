@@ -1,38 +1,104 @@
 #include "rubype.h"
 
-VALUE rb_mRubype, rb_cAny, rb_mBoolean, rb_cTypePair;
+VALUE rb_mRubype, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError, rb_eInvalidTypesigError;
 
 #define STR2SYM(x) ID2SYM(rb_intern(x))
+static ID id_is_a_p, id_to_s, id_plus;
+#define f_boolcast(x) ((x) ? Qtrue : Qfalse)
+
+int unmatch_type_p(VALUE obj, VALUE type_info)
+{
+  int check;
+  switch (TYPE(type_info)) {
+    case T_SYMBOL: check = rb_respond_to(obj, rb_to_id(type_info));
+                   break;
+
+    case T_MODULE: check = (int)rb_funcall(obj, id_is_a_p, 1, type_info);
+                   break;
+
+    case T_CLASS:  check = (int)rb_funcall(obj, id_is_a_p, 1, type_info);
+                   break;
+
+    default:       check = 0;
+                   break;
+  }
+  return !check;
+}
 
 static VALUE
-rb_mod_prepend(int argc, VALUE *argv, VALUE module)
+expected_mes(VALUE expected)
+{
+  VALUE str;
+
+  switch (TYPE(expected)) {
+    case T_SYMBOL:
+      str = rb_str_new2("respond to #");
+      rb_str_catf(str, "%"PRIsVALUE, expected);
+      return str;
+      break;
+    case T_MODULE:
+      return rb_funcall(expected, id_to_s, 0);
+      break;
+    case T_CLASS:
+      return rb_funcall(expected, id_to_s, 0);
+      break;
+  }
+  return rb_str_new2("");
+}
+
+
+static VALUE
+test(VALUE rubype, VALUE obj)
+{
+  VALUE str;
+  str = rb_str_new2("");
+  rb_str_catf(str, "%"PRIsVALUE"#%"PRIsVALUE, obj, obj);
+  return str;
+}
+static VALUE
+rb_rubype_assert_args_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE args, VALUE type_infos, VALUE caller_trace)
 {
   int i;
-  ID id_prepend_features, id_prepended;
+  VALUE arg, type_info, error_mes;
+  VALUE target;
 
-  CONST_ID(id_prepend_features, "prepend_features");
-  CONST_ID(id_prepended, "prepended");
-  for (i = 0; i < argc; i++)
-    Check_Type(argv[i], T_MODULE);
-    while (argc--) {
-      rb_funcall(argv[argc], id_prepend_features, 1, module);
-      rb_funcall(argv[argc], id_prepended, 1, module);
+  for (i=0; i<RARRAY_LEN(args); i++) {
+    arg       = rb_ary_entry(args, i);
+    type_info = rb_ary_entry(type_infos, i);
+
+    if (unmatch_type_p(arg, type_info)){
+      target = rb_str_new2("");
+      rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s %d argument", meth_caller, meth, i+1);
+
+      rb_raise(rb_eRubypeArgumentTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE"", target, expected_mes(type_info), arg);
     }
+  }
+  return Qtrue;
+}
 
-  return module;
+static VALUE
+rb_rubype_assert_rtn_type(VALUE rubype, VALUE meth_caller, VALUE meth, VALUE rtn, VALUE type_info, VALUE caller_trace)
+{
+  VALUE target;
+  if (unmatch_type_p(rtn, type_info)){
+    target = rb_str_new2("");
+    rb_str_catf(target, "%"PRIsVALUE"#%"PRIsVALUE"'s return", meth_caller, meth);
+    rb_raise(rb_eRubypeReturnTypeError, "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE, target, expected_mes(type_info), rtn);
+  }
+  return Qtrue;
 }
 
 void
 Init_rubype(void)
 {
-  // rb_mRubype  = rb_define_module("Rubype");
-  // rb_cAny     = rb_define_class("Any", rb_cObject);
-  // rb_mBoolean = rb_define_module("Boolean");
-  // rb_include_module(rb_cTrueClass, rb_mBoolean);
-  // rb_include_module(rb_cFalseClass, rb_mBoolean);
-  // rb_define_class(
-  //   "TypePair",
-  //   rb_funcall(rb_cStruct, rb_intern("new"), 2, STR2SYM("last_arg_type"), STR2SYM("rtn_type"))
-  // );
-  rb_define_method(rb_cModule, "prepend", rb_mod_prepend, -1);
+  id_is_a_p = rb_intern_const("is_a?");
+  id_to_s = rb_intern_const("to_s");
+  id_plus = rb_intern_const("+");
+  rb_mRubype  = rb_define_module("Rubype");
+  rb_eRubypeArgumentTypeError = rb_define_class_under(rb_mRubype, "ArgumentTypeError", rb_eTypeError);
+  rb_eRubypeReturnTypeError = rb_define_class_under(rb_mRubype, "ReturnTypeError", rb_eTypeError);
+  rb_eInvalidTypesigError = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
+  rb_define_singleton_method(rb_mRubype, "assert_args_type", rb_rubype_assert_args_type, 5);
+  rb_define_singleton_method(rb_mRubype, "assert_rtn_type", rb_rubype_assert_rtn_type, 5);
+  rb_define_singleton_method(rb_mRubype, "test", test, 1);
 }
