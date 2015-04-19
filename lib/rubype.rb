@@ -38,7 +38,6 @@ module Rubype
     end
 
     private
-
       def valid_type_info_hash?(type_info_hash)
         return false unless type_info_hash.is_a?(Hash)
         type_info_hash.first[0].is_a?(Array)
