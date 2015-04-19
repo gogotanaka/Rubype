@@ -3,7 +3,6 @@
 VALUE rb_mRubype, rb_cContract, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError, rb_eInvalidTypesigError;
 static ID id_is_a_p, id_to_s, id_meth, id_owner, id_arg_types, id_rtn_type;
 
-#define f_boolcast(x) ((x) ? Qtrue : Qfalse)
 #define error_fmt "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE""
 #define unmatch_type_p(obj, type_info) !(match_type_p(obj, type_info))
 
@@ -24,8 +23,7 @@ int match_type_p(VALUE obj, VALUE type_info)
   }
 }
 
-static VALUE
-expected_mes(VALUE expected)
+VALUE expected_mes(VALUE expected)
 {
   switch (TYPE(expected)) {
     case T_SYMBOL: return rb_sprintf("respond to #%"PRIsVALUE, expected);
@@ -48,13 +46,11 @@ rb_rubype_assert_type(VALUE self, VALUE args, VALUE rtn)
   int i;
   VALUE target;
   VALUE meth_caller, meth, arg_types, arg_type, rtn_type, arg;
+
   meth_caller = rb_ivar_get(self, id_owner);
   meth        = rb_ivar_get(self, id_meth);
   arg_types   = rb_ivar_get(self, id_arg_types);
   rtn_type    = rb_ivar_get(self, id_rtn_type);
-
-  Check_Type(meth, T_SYMBOL);
-  Check_Type(arg_types, T_ARRAY);
 
   for (i=0; i<RARRAY_LEN(args); i++) {
     arg      = rb_ary_entry(args, i);
@@ -73,6 +69,15 @@ rb_rubype_assert_type(VALUE self, VALUE args, VALUE rtn)
   return rtn;
 }
 
+static VALUE
+rb_rubype_initialize(VALUE self, VALUE arg_types, VALUE rtn_type, VALUE owner, VALUE meth) {
+  rb_ivar_set(self, id_owner,     owner);
+  rb_ivar_set(self, id_meth,      meth);
+  rb_ivar_set(self, id_arg_types, arg_types);
+  rb_ivar_set(self, id_rtn_type,  rtn_type);
+  return Qnil;
+}
+
 void
 Init_rubype(void)
 {
@@ -83,12 +88,13 @@ Init_rubype(void)
   rb_eInvalidTypesigError     = rb_define_class_under(rb_mRubype, "InvalidTypesigError", rb_eTypeError);
 
   rb_cContract = rb_define_class_under(rb_mRubype, "Contract", rb_cObject);
+  rb_define_method(rb_cContract, "initialize", rb_rubype_initialize, 4);
   rb_define_method(rb_cContract, "assert_type", rb_rubype_assert_type, 2);
 
   id_meth      = rb_intern("@meth");
   id_owner     = rb_intern("@owner");
   id_arg_types = rb_intern("@arg_types");
   id_rtn_type  = rb_intern("@rtn_type");
-  id_is_a_p = rb_intern_const("is_a?");
-  id_to_s   = rb_intern_const("to_s");
+  id_is_a_p    = rb_intern("is_a?");
+  id_to_s      = rb_intern("to_s");
 }
