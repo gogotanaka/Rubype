@@ -5,7 +5,7 @@ module Rubype
   module TypeInfo; end
   Module.send(:include, TypeInfo)
   Symbol.send(:include, TypeInfo)
-  @@typed_method = Hash.new({})
+  @@typed_methods = Hash.new({})
 
   class << self
     def define_typed_method(owner, meth, type_info_hash, __rubype__)
@@ -13,7 +13,7 @@ module Rubype
       arg_types, rtn_type = *type_info_hash.first
 
       contract = Contract.new(arg_types, rtn_type, owner, meth)
-      @@typed_method[owner][meth] = contract
+      @@typed_methods[owner][meth] = contract
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
         contract.assert_args_type(self, args)
@@ -35,8 +35,8 @@ module Rubype
       end
     end
 
-    def typed_method
-      @@typed_method
+    def typed_methods
+      @@typed_methods
     end
 
     private
