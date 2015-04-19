@@ -1,6 +1,5 @@
 require_relative 'rubype/version'
 require_relative 'rubype/contract'
-require 'rubype/rubype'
 
 module Rubype
   module TypeInfo; end
@@ -17,7 +16,7 @@ module Rubype
       @@typed_method[owner][meth] = contract
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
-        contract.assert_arg_types(self, args)
+        contract.assert_args_type(self, args)
         super(*args, &block)
           .tap { |rtn| contract.assert_rtn_type(self, rtn) }
       end
