@@ -19,17 +19,17 @@ end
 
 class Method
   def type_info
-    Rubype.typed_method[owner][name].info
+    Rubype.typed_methods[owner][name].info
   end
   typesig :type_info, [] => Hash
 
   def arg_types
-    Rubype.typed_method[owner][name].arg_types
+    Rubype.typed_methods[owner][name].arg_types
   end
   typesig :arg_types, [] => Array
 
   def return_type
-    Rubype.typed_method[owner][name].rtn_type
+    Rubype.typed_methods[owner][name].rtn_type
   end
   typesig :arg_types, [] => Any
 end
