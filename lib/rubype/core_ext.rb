@@ -31,5 +31,5 @@ class Method
   def return_type
     Rubype.typed_methods[owner][name].rtn_type
   end
-  typesig :arg_types, [] => Any
+  typesig :return_type, [] => Any
 end
