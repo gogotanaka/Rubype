@@ -132,6 +132,21 @@ class TestRubype < Minitest::Test
     end
   end
 
+  def test_for_readme
+    assert_raises(Rubype::ArgumentTypeError) do
+       eval <<-RUBY_CODE
+        class MyClass
+          def sum(x, y)
+            x.to_i + y
+          end
+          typesig :sum, [Numeric, Numeric] => Numeric
+        end
+
+        MyClass.new.sum(:has_no_to_i, 2)
+      RUBY_CODE
+    end
+  end
+
   private
     def assert_equal_to_s(str, val)
       assert_equal str, val.to_s
