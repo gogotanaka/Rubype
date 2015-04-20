@@ -24,14 +24,9 @@ module Rubype
     end
 
     def get_method_visibility(owner, meth)
-      case
-      when owner.private_method_defined?(meth)
-        :private
-      when owner.protected_method_defined?(meth)
-        :protected
-      else
-        :public
-      end
+      return :private if owner.private_method_defined?(meth)
+      return :protected if owner.protected_method_defined?(meth)
+      :public
     end
 
     def typed_methods
