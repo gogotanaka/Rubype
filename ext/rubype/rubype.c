@@ -40,17 +40,20 @@ VALUE expected_mes(VALUE expected)
   }
 }
 
+#define assing_ivars VALUE meth_caller, meth, arg_types, rtn_type;\
+                     meth_caller = rb_ivar_get(self, id_owner);\
+                     meth        = rb_ivar_get(self, id_meth);\
+                     arg_types   = rb_ivar_get(self, id_arg_types);\
+                     rtn_type    = rb_ivar_get(self, id_rtn_type);
+
 static VALUE
-rb_rubype_assert_type(VALUE self, VALUE args, VALUE rtn)
+rb_rubype_assert_args_type(VALUE self, VALUE args)
 {
   int i;
   VALUE target;
-  VALUE meth_caller, meth, arg_types, arg_type, rtn_type, arg;
+  VALUE arg, arg_type;
 
-  meth_caller = rb_ivar_get(self, id_owner);
-  meth        = rb_ivar_get(self, id_meth);
-  arg_types   = rb_ivar_get(self, id_arg_types);
-  rtn_type    = rb_ivar_get(self, id_rtn_type);
+  assing_ivars
 
   for (i=0; i<RARRAY_LEN(args); i++) {
     arg      = rb_ary_entry(args, i);
@@ -61,6 +64,14 @@ rb_rubype_assert_type(VALUE self, VALUE args, VALUE rtn)
       rb_raise(rb_eRubypeArgumentTypeError, error_fmt, target, expected_mes(arg_type), arg);
     }
   }
+  return Qnil;
+}
+
+static VALUE
+rb_rubype_assert_rtn_type(VALUE self, VALUE rtn)
+{
+  VALUE target;
+  assing_ivars
 
   if (unmatch_type_p(rtn, rtn_type)){
     target = rb_sprintf("%"PRIsVALUE"#%"PRIsVALUE"'s return", meth_caller, meth);
@@ -89,7 +100,8 @@ Init_rubype(void)
 
   rb_cContract = rb_define_class_under(rb_mRubype, "Contract", rb_cObject);
   rb_define_method(rb_cContract, "initialize", rb_rubype_initialize, 4);
-  rb_define_method(rb_cContract, "assert_type", rb_rubype_assert_type, 2);
+  rb_define_method(rb_cContract, "assert_args_type", rb_rubype_assert_args_type, 1);
+  rb_define_method(rb_cContract, "assert_rtn_type", rb_rubype_assert_rtn_type, 1);
 
   id_meth      = rb_intern("@meth");
   id_owner     = rb_intern("@owner");

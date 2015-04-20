@@ -16,7 +16,8 @@ module Rubype
       @@typed_methods[owner][meth] = contract
       method_visibility = get_method_visibility(owner, meth)
       __rubype__.send(:define_method, meth) do |*args, &block|
-        contract.assert_type(args, super(*args, &block))
+        contract.assert_args_type(args)
+        super(*args, &block).tap { |rtn| contract.assert_rtn_type(rtn) }
       end
 
       __rubype__.send(method_visibility, meth)
