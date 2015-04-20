@@ -127,7 +127,7 @@ class TestRubype < Minitest::Test
        Class.new.class_eval <<-RUBY_CODE
         def mth(n1, n2)
         end
-        typesig :private_mth, Numeric => NilClass
+        typesig :mth, Numeric => NilClass
       RUBY_CODE
     end
   end

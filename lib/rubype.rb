@@ -8,25 +8,14 @@ module Rubype
   @@typed_methods = Hash.new({})
 
   class << self
-    def define_typed_method(owner, meth, type_info_hash, __rubype__)
+    def define_typed_method(owner, meth, type_info_hash, __proxy__)
       raise InvalidTypesigError unless valid_type_info_hash?(type_info_hash)
       arg_types, rtn_type = *type_info_hash.first
 
       contract = Contract.new(arg_types, rtn_type, owner, meth)
       @@typed_methods[owner][meth] = contract
-      method_visibility = get_method_visibility(owner, meth)
-      __rubype__.send(:define_method, meth) do |*args, &block|
-        contract.assert_args_type(args)
-        super(*args, &block).tap { |rtn| contract.assert_rtn_type(rtn) }
-      end
 
-      __rubype__.send(method_visibility, meth)
-    end
-
-    def get_method_visibility(owner, meth)
-      return :private if owner.private_method_defined?(meth)
-      return :protected if owner.protected_method_defined?(meth)
-      :public
+      add_typed_method_to_proxy(owner, meth, __proxy__)
     end
 
     def typed_methods

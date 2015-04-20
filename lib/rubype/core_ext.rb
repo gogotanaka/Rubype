@@ -6,13 +6,13 @@ Any = BasicObject
 class Module
   private
 
-  def __rubype__
-    prepend (@__rubype__ = Module.new) unless @__rubype__
-    @__rubype__
+  def __proxy__
+    prepend (@__proxy__ = Module.new) unless @__proxy__
+    @__proxy__
   end
 
   def typesig(meth, type_info_hash)
-    ::Rubype.define_typed_method(self, meth, type_info_hash, __rubype__)
+    ::Rubype.define_typed_method(self, meth, type_info_hash, __proxy__)
     self
   end
 end
