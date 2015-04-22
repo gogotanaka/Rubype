@@ -1,7 +1,7 @@
 #include "rubype.h"
 
 VALUE rb_mRubype, rb_cContract, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError, rb_eInvalidTypesigError;
-static ID id_to_s, id_meth, id_owner, id_arg_types, id_rtn_type, id_private_meth_p, id_protected_meth_p, id_private, id_protected;
+static ID id_to_s, id_meth, id_owner, id_arg_types, id_rtn_type, id_private_meth_p, id_protected_meth_p, id_private, id_protected, id_define_method;
 
 #define error_fmt "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE""
 #define unmatch_type_p(obj, type_info) !(match_type_p(obj, type_info))
@@ -83,22 +83,21 @@ rb_rubype_initialize(VALUE self, VALUE arg_types, VALUE rtn_type, VALUE owner, V
   return Qnil;
 }
 
-// TODO
-#define define_proxy_method rb_eval_string("__proxy__.send(:define_method, meth) do |*args, &block|\ncontract.assert_args_type(args)\nsuper(*args, &block).tap { |rtn| contract.assert_rtn_type(rtn) }\nend");
-
 static VALUE
 rb_rubype_add_typed_method_to_proxy(VALUE self, VALUE owner, VALUE meth, VALUE proxy_mod)
 {
+  VALUE body;
+  body = rb_block_lambda();
   if ((int)rb_funcall(owner, id_private_meth_p, 1, meth)) {
-    define_proxy_method
+    rb_funcall(proxy_mod, id_define_method, 2, meth, body);
     rb_funcall(proxy_mod, id_private, 1, meth);
   }
   else if ((int)rb_funcall(owner, id_protected_meth_p, 1, meth)) {
-    define_proxy_method
+    rb_funcall(proxy_mod, id_define_method, 2, meth, body);
     rb_funcall(proxy_mod, id_protected, 1, meth);
   }
   else {
-    define_proxy_method
+    rb_funcall(proxy_mod, id_define_method, 2, meth, body);
   }
   return Qnil;
 }
@@ -129,4 +128,6 @@ Init_rubype(void)
   id_protected_meth_p = rb_intern("protected_method_defined?");
   id_private          = rb_intern("private");
   id_protected        = rb_intern("protected");
+
+  id_define_method    = rb_intern("define_method");
 }

@@ -15,7 +15,10 @@ module Rubype
       contract = Contract.new(arg_types, rtn_type, owner, meth)
       @@typed_methods[owner][meth] = contract
 
-      add_typed_method_to_proxy(owner, meth, __proxy__)
+      add_typed_method_to_proxy(owner, meth, __proxy__) do |*args, &block|
+        contract.assert_args_type(args)
+        contract.assert_rtn_type(super(*args, &block))
+      end
     end
 
     def typed_methods
