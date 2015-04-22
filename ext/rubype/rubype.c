@@ -12,10 +12,10 @@ int match_type_p(VALUE obj, VALUE type_info)
     case T_SYMBOL: return rb_respond_to(obj, rb_to_id(type_info));
                    break;
 
-    case T_MODULE: return (int)rb_funcall(obj, id_is_a_p, 1, type_info);
+    case T_MODULE: return (int)rb_obj_is_kind_of(obj, type_info);
                    break;
 
-    case T_CLASS:  return (int)rb_funcall(obj, id_is_a_p, 1, type_info);
+    case T_CLASS:  return (int)rb_obj_is_kind_of(obj, type_info);
                    break;
 
     default:       return 0;
