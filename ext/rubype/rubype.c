@@ -1,7 +1,7 @@
 #include "rubype.h"
 
 VALUE rb_mRubype, rb_cContract, rb_eRubypeArgumentTypeError, rb_eRubypeReturnTypeError, rb_eInvalidTypesigError;
-static ID id_is_a_p, id_to_s, id_meth, id_owner, id_arg_types, id_rtn_type, id_private_meth_p, id_protected_meth_p, id_private, id_protected;
+static ID id_to_s, id_meth, id_owner, id_arg_types, id_rtn_type, id_private_meth_p, id_protected_meth_p, id_private, id_protected;
 
 #define error_fmt "\nfor %"PRIsVALUE"\nExpected: %"PRIsVALUE"\nActual:   %"PRIsVALUE""
 #define unmatch_type_p(obj, type_info) !(match_type_p(obj, type_info))
@@ -12,9 +12,7 @@ int match_type_p(VALUE obj, VALUE type_info)
     case T_SYMBOL: return rb_respond_to(obj, rb_to_id(type_info));
                    break;
 
-    case T_MODULE: return (int)rb_obj_is_kind_of(obj, type_info);
-                   break;
-
+    case T_MODULE:
     case T_CLASS:  return (int)rb_obj_is_kind_of(obj, type_info);
                    break;
 
@@ -29,9 +27,7 @@ VALUE expected_mes(VALUE expected)
     case T_SYMBOL: return rb_sprintf("respond to #%"PRIsVALUE, expected);
                    break;
 
-    case T_MODULE: return rb_funcall(expected, id_to_s, 0);
-                   break;
-
+    case T_MODULE:
     case T_CLASS:  return rb_funcall(expected, id_to_s, 0);
                    break;
 
@@ -40,20 +36,17 @@ VALUE expected_mes(VALUE expected)
   }
 }
 
-#define assing_ivars VALUE meth_caller, meth, arg_types, rtn_type;\
+#define assing_ivars VALUE meth_caller, meth, target;\
                      meth_caller = rb_ivar_get(self, id_owner);\
-                     meth        = rb_ivar_get(self, id_meth);\
-                     arg_types   = rb_ivar_get(self, id_arg_types);\
-                     rtn_type    = rb_ivar_get(self, id_rtn_type);
+                     meth        = rb_ivar_get(self, id_meth);
 
 static VALUE
 rb_rubype_assert_args_type(VALUE self, VALUE args)
 {
-  int i;
-  VALUE target;
-  VALUE arg, arg_type;
-
   assing_ivars
+  int i;
+  VALUE arg, arg_type;
+  VALUE arg_types = rb_ivar_get(self, id_arg_types);
 
   for (i=0; i<RARRAY_LEN(args); i++) {
     arg      = rb_ary_entry(args, i);
@@ -70,8 +63,8 @@ rb_rubype_assert_args_type(VALUE self, VALUE args)
 static VALUE
 rb_rubype_assert_rtn_type(VALUE self, VALUE rtn)
 {
-  VALUE target;
   assing_ivars
+  VALUE rtn_type = rb_ivar_get(self, id_rtn_type);
 
   if (unmatch_type_p(rtn, rtn_type)){
     target = rb_sprintf("%"PRIsVALUE"#%"PRIsVALUE"'s return", meth_caller, meth);
@@ -130,7 +123,6 @@ Init_rubype(void)
   id_owner     = rb_intern("@owner");
   id_arg_types = rb_intern("@arg_types");
   id_rtn_type  = rb_intern("@rtn_type");
-  id_is_a_p    = rb_intern("is_a?");
   id_to_s      = rb_intern("to_s");
 
   id_private_meth_p   = rb_intern("private_method_defined?");
