@@ -222,7 +222,7 @@ In terms of performance, only core module(https://github.com/gogotanaka/Rubype/b
 
 Only two API will be translate to C, it means you don't need to know what C dose!
 
-1. Fork it ( https://github.com/[my-github-username]/rubype/fork )
+1. Fork it ( https://github.com/gogotanaka/Rubype/fork )
 
 2. Create your feature branch (`git checkout -b my-new-feature`)
 
